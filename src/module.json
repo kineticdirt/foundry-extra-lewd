@@ -2,7 +2,7 @@
   "name": "playlist_import",
   "title": "Playlist Importer",
   "description": "Speeds up the process of importing your sounds",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "author": "Jacob McAuley",
   "type": "module",
   "socket": true,
@@ -47,8 +47,11 @@
   "esmodules": ["./main.js"],
   "styles": [],
   "packs": [],
-  "minimumCoreVersion": "0.8.9",
-  "compatibleCoreVersion": "9",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13.350",
+    "maximum": "13"
+  },
   "manifestPlusVersion": "1.2.0",
   "url": "https://github.com/JacobMcAuley/playlist_import",
   "manifest": "https://github.com/JacobMcAuley/playlist_import/releases/latest/download/module.json",

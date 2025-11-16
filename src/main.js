@@ -75,7 +75,7 @@ class PlaylistImporterInitializer {
 
   static hookDeletePlaylistSound() {
     Hooks.on('deletePlaylistSound', (playlist, data, flags, id) => {
-      const playlistName = playlist.data.name;
+      const playlistName = playlist.name;
       const soundName = data.path;
       PlaylistImporterInitializer._removeSound(playlistName, [soundName]);
     });
@@ -196,7 +196,7 @@ class PlaylistImporter {
     for (let i = 0; i < words.length; i++) {
       if (i === 0 || i === words.length - 1 || !small.includes(words[i])) {
         try {
-          words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+          words[i] = words[i][0].toUpperCase() + words[i].substring(1);
         } catch (error) {
           console.log(error);
           console.log(`Error in attempting to parse song ${name}`);

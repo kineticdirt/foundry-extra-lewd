@@ -1,3 +1,10 @@
+## 1.7.6 (v13 Update)
+
+- Updated for Foundry VTT v13 compatibility
+- Fixed deprecated `.data` property access (now uses direct property access)
+- Replaced deprecated `substr()` with `substring()`
+- Updated module.json compatibility to v13.350
+
 ## 1.7.5
 
 - Some clean up and better design pattern

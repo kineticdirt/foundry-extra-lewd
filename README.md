@@ -22,6 +22,8 @@ If you're like me, you probably enjoy amassing a large collection of songs to pl
 I will only personally be maintaining the most recent version of foundry. In short, this means you may not get backwards compatibility for any breaking changes.
 Fortunately, you should be able to use releases to download a compatible version if it exists.
 
+**This version is updated for Foundry VTT v13 compatibility.**
+
 ![example](imgs/example.gif)
 
 ## Installation
