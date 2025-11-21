@@ -12,11 +12,15 @@ class PlaylistImporterInitializer {
     PlaylistImporterInitializer.hookRenderSettings();
     PlaylistImporterInitializer.hookDeletePlaylist();
     PlaylistImporterInitializer.hookDeletePlaylistSound();
+    PlaylistImporterInitializer.hookRenderAmbientSoundConfig();
+    PlaylistImporterInitializer.hookCanvasDrop();
+    PlaylistImporterInitializer.hookAmbientSoundPlayback();
   }
 
   static hookRenderPlaylistDirectory() {
     /**
      * Appends a button onto the playlist to import songs.
+     * Also makes playlists draggable onto the canvas.
      */
 
     Hooks.on('renderPlaylistDirectory', (app, html, data) => {
@@ -43,6 +47,22 @@ class PlaylistImporterInitializer {
           }
         });
       }
+
+      // Make playlists draggable onto the canvas
+      html.find('.directory-item').each((index, element) => {
+        const $item = $(element);
+        const playlistId = $item.data('document-id');
+        if (playlistId) {
+          $item.attr('draggable', 'true');
+          $item.on('dragstart', (ev) => {
+            ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify({
+              type: 'Playlist',
+              playlistId: playlistId
+            }));
+            ev.originalEvent.dataTransfer.effectAllowed = 'copy';
+          });
+        }
+      });
     });
   }
 
@@ -107,6 +127,140 @@ class PlaylistImporterInitializer {
 
   static _registerSettings() {
     registerSettings();
+  }
+
+  static hookRenderAmbientSoundConfig() {
+    /**
+     * Adds playlist selection to AmbientSound configuration dialog
+     */
+    Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
+      const playlistSelect = $(`
+        <div class="form-group">
+          <label>${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylist`)}</label>
+          <select name="playlist-select" style="width: 100%;">
+            <option value="">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.NoPlaylist`)}</option>
+          </select>
+          <p class="notes">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylistHint`)}</p>
+        </div>
+      `);
+
+      // Populate playlist options
+      const select = playlistSelect.find('select');
+      const playlists = game.playlists?.contents || [];
+      playlists.forEach(playlist => {
+        const option = $(`<option value="${playlist.id}">${playlist.name}</option>`);
+        // Check if this sound already has a playlist assigned
+        const currentPlaylistId = app.object.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+        if (currentPlaylistId === playlist.id) {
+          option.attr('selected', 'selected');
+        }
+        select.append(option);
+      });
+
+      // Insert before the path field
+      html.find('input[name="path"]').closest('.form-group').before(playlistSelect);
+
+      // Handle playlist selection change
+      select.on('change', async (ev) => {
+        const playlistId = select.val();
+        if (playlistId) {
+          const playlist = game.playlists?.get(playlistId);
+          if (playlist && playlist.sounds.length > 0) {
+            // Set the first sound from the playlist as the default
+            const firstSound = playlist.sounds[0];
+            html.find('input[name="path"]').val(firstSound.path);
+            html.find('input[name="name"]').val(playlist.name);
+            
+            // Store playlist ID in flags
+            await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistId', playlistId);
+            await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistMode', true);
+          }
+        } else {
+          // Clear playlist flags
+          await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+          await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistMode');
+        }
+      });
+
+      // If sound has a playlist, show it's selected
+      const currentPlaylistId = app.object.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+      if (currentPlaylistId) {
+        select.val(currentPlaylistId);
+      }
+    });
+  }
+
+  static hookCanvasDrop() {
+    /**
+     * Handles dropping playlists onto the canvas to create positioned sounds
+     */
+    Hooks.on('canvasDrop', async (canvas, data) => {
+      try {
+        const dropData = JSON.parse(data.dataTransfer.getData('text/plain'));
+        if (dropData.type === 'Playlist' && dropData.playlistId) {
+          const playlist = game.playlists?.get(dropData.playlistId);
+          if (!playlist || !playlist.sounds || playlist.sounds.length === 0) {
+            ui.notifications.warn(game.i18n.localize(`${CONSTANTS.MODULE_NAME}.PlaylistEmpty`));
+            return false;
+          }
+
+          // Get drop coordinates
+          const coords = canvas.grid.getSnappedPosition(data.x, data.y);
+          
+          // Get the first sound from the playlist
+          const firstSound = playlist.sounds[0];
+          
+          // Create ambient sound at drop location
+          const ambientSoundData = {
+            t: 'l', // type: local
+            x: coords.x,
+            y: coords.y,
+            radius: 1000,
+            path: firstSound.path,
+            volume: firstSound.volume || 0.5,
+            easing: true,
+            hidden: false,
+            locked: false,
+            flags: {
+              [CONSTANTS.MODULE_NAME]: {
+                playlistId: playlist.id,
+                playlistMode: true
+              }
+            }
+          };
+
+          await AmbientSound.create(ambientSoundData, { parent: canvas.scene });
+          ui.notifications.info(game.i18n.format(`${CONSTANTS.MODULE_NAME}.PlaylistPlaced`, { name: playlist.name }));
+          return false; // Prevent default handling
+        }
+      } catch (error) {
+        // Not our drop data, let it pass through
+        if (PLIMP.playlistImporter?.DEBUG) {
+          console.log('Playlist-Importer: Drop data not recognized', error);
+        }
+      }
+      return true; // Allow other drop handlers to process
+    });
+  }
+
+  static hookAmbientSoundPlayback() {
+    /**
+     * Intercepts ambient sound playback to play from playlist if configured
+     */
+    Hooks.on('playAmbientSound', (sound, options) => {
+      const playlistId = sound.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+      const playlistMode = sound.getFlag(CONSTANTS.MODULE_NAME, 'playlistMode');
+      
+      if (playlistId && playlistMode) {
+        const playlist = game.playlists?.get(playlistId);
+        if (playlist && playlist.sounds && playlist.sounds.length > 0) {
+          // Start playing the playlist instead
+          playlist.playAll();
+          return false; // Prevent default sound playback
+        }
+      }
+      return true; // Allow default playback
+    });
   }
 }
 

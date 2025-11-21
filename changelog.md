@@ -1,3 +1,11 @@
+## 1.8.0 (Map Positioning Feature)
+
+- Added drag-and-drop functionality: Drag entire playlists from the directory onto the map canvas
+- Added playlist selection option when creating ambient sounds
+- Ambient sounds can now be configured to play from a playlist instead of a single sound file
+- When a playlist is selected, the first track is used as the initial sound
+- Playlists placed on the map create positioned ambient sounds at the drop location
+
 ## 1.7.6 (v13 Update)
 
 - Updated for Foundry VTT v13 compatibility
