@@ -1,0 +1,29 @@
+<form class="flexcol">
+    <div class="form-group">
+        <label>{{localize "playlist_import.Builder.Type"}}</label>
+        <select name="type">
+            <option value="class">{{localize "playlist_import.Builder.Types.Class"}}</option>
+            <option value="background">{{localize "playlist_import.Builder.Types.Background"}}</option>
+            <option value="proficiency">{{localize "playlist_import.Builder.Types.Proficiency"}}</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "playlist_import.Builder.Name"}}</label>
+        <input type="text" name="name" placeholder="Name"/>
+    </div>
+
+    <!-- Dynamic content based on type selection (handled by JS or separate tabs) -->
+    <!-- For simplicity, we'll show basic fields here and expand later -->
+    
+    <div class="form-group">
+        <label>{{localize "playlist_import.Builder.Description"}}</label>
+        <textarea name="description"></textarea>
+    </div>
+
+    <footer class="sheet-footer flexrow">
+        <button type="submit" name="submit">
+            <i class="fas fa-save"></i> {{localize "playlist_import.Builder.Create"}}
+        </button>
+    </footer>
+</form>

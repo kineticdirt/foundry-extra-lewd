@@ -1,0 +1,18 @@
+<form class="clothing-sheet flexcol">
+	<div class="clothing-slots grid grid-2col">
+		{{#each slots as |slot key|}}
+		<div class="clothing-slot" data-slot="{{key}}">
+			<label>{{slot.label}}</label>
+			<div class="slot-content drop-zone {{#if slot.item}}filled{{/if}}">
+				{{#if slot.item}}
+				<img src="{{slot.item.img}}" title="{{slot.item.name}}" width="36" height="36" />
+				<span class="item-name">{{slot.item.name}}</span>
+				<a class="item-control item-delete" title="Remove Item"><i class="fas fa-trash"></i></a>
+				{{else}}
+				<span class="placeholder">{{localize "playlist_import.Clothing.Empty"}}</span>
+				{{/if}}
+			</div>
+		</div>
+		{{/each}}
+	</div>
+</form>
