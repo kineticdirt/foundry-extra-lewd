@@ -1,9 +1,10 @@
 {
-  "name": "playlist_import",
-  "title": "Playlist Importer",
-  "description": "Speeds up the process of importing your sounds",
-  "version": "1.8.0",
-  "author": "Jacob McAuley",
+  "id": "foundry-extra-lewd",
+  "name": "foundry-extra-lewd",
+  "title": "Foundry Extra Lewd",
+  "description": "A comprehensive module adding Playlist Importing, Sound Linking, Compendium Building, and Clothing System.",
+  "version": "2.0.0",
+  "author": "KineticDirt",
   "type": "module",
   "socket": true,
   "includes": [
@@ -17,20 +18,7 @@
     "./icons/**",
     "./packs/**"
   ],
-  "media": [
-    {
-      "type": "icon",
-      "location": ""
-    },
-    {
-      "type": "cover",
-      "location": ""
-    },
-    {
-      "type": "screenshot",
-      "location": ""
-    }
-  ],
+  "media": [],
   "languages": [
     {
       "lang": "en",
@@ -48,17 +36,15 @@
   "styles": [],
   "packs": [],
   "compatibility": {
-    "minimum": "13",
-    "verified": "13.350",
-    "maximum": "13"
+    "minimum": "10",
+    "verified": "11",
+    "maximum": "12"
   },
-  "manifestPlusVersion": "1.2.0",
-  "url": "https://github.com/JacobMcAuley/playlist_import",
-  "manifest": "https://github.com/JacobMcAuley/playlist_import/releases/latest/download/module.json",
-  "download": "https://github.com/JacobMcAuley/playlist_import/releases/download/v1.7.5/module.zip",
-  "readme": "https://github.com/JacobMcAuley/playlist_import/blob/v1.7.5/README.md",
-  "changelog": "https://github.com/JacobMcAuley/playlist_import/blob/v1.7.5/changelog.md",
-  "bugs": "https://github.com/JacobMcAuley/playlist_import/issues",
+  "url": "https://github.com/kineticdirt/foundry-extra-lewd",
+  "manifest": "https://raw.githubusercontent.com/kineticdirt/foundry-extra-lewd/master/src/module.json",
+  "download": "https://github.com/kineticdirt/foundry-extra-lewd/archive/refs/heads/master.zip",
+  "readme": "https://github.com/kineticdirt/foundry-extra-lewd/blob/master/README.md",
+  "bugs": "https://github.com/kineticdirt/foundry-extra-lewd/issues",
   "allowBugReporter": true,
   "dependencies": []
 }
