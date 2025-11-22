@@ -1,50 +1,52 @@
 {
-  "id": "foundry-extra-lewd",
-  "name": "foundry-extra-lewd",
-  "title": "Foundry Extra Lewd",
-  "description": "A comprehensive module adding Playlist Importing, Sound Linking, Compendium Building, and Clothing System.",
-  "version": "2.0.0",
-  "author": "KineticDirt",
-  "type": "module",
-  "socket": true,
-  "includes": [
-    "./assets/**",
-    "./lang/**",
-    "./scripts/**",
-    "./styles/**",
-    "./templates/**",
-    "./module.json",
-    "./README.md",
-    "./icons/**",
-    "./packs/**"
-  ],
-  "media": [],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    },
-    {
-      "lang": "es",
-      "name": "Español",
-      "path": "lang/es.json"
-    }
-  ],
-  "scripts": [],
-  "esmodules": ["./main.js"],
-  "styles": [],
-  "packs": [],
-  "compatibility": {
-    "minimum": "10",
-    "verified": "11",
-    "maximum": "12"
-  },
-  "url": "https://github.com/kineticdirt/foundry-extra-lewd",
-  "manifest": "https://raw.githubusercontent.com/kineticdirt/foundry-extra-lewd/master/src/module.json",
-  "download": "https://github.com/kineticdirt/foundry-extra-lewd/archive/refs/heads/master.zip",
-  "readme": "https://github.com/kineticdirt/foundry-extra-lewd/blob/master/README.md",
-  "bugs": "https://github.com/kineticdirt/foundry-extra-lewd/issues",
-  "allowBugReporter": true,
-  "dependencies": []
+	"id": "foundry-extra-lewd",
+	"name": "foundry-extra-lewd",
+	"title": "Foundry Extra Lewd",
+	"description": "A comprehensive module adding Playlist Importing, Sound Linking, Compendium Building, and Clothing System.",
+	"version": "2.0.0",
+	"author": "KineticDirt",
+	"type": "module",
+	"socket": true,
+	"includes": [
+		"./assets/**",
+		"./lang/**",
+		"./scripts/**",
+		"./styles/**",
+		"./templates/**",
+		"./module.json",
+		"./README.md",
+		"./icons/**",
+		"./packs/**"
+	],
+	"media": [],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		},
+		{
+			"lang": "es",
+			"name": "Español",
+			"path": "lang/es.json"
+		}
+	],
+	"scripts": [],
+	"esmodules": [
+		"./main.js"
+	],
+	"styles": [],
+	"packs": [],
+	"compatibility": {
+		"minimum": "12",
+		"verified": "13",
+		"maximum": "13"
+	},
+	"url": "https://github.com/kineticdirt/foundry-extra-lewd",
+	"manifest": "https://raw.githubusercontent.com/kineticdirt/foundry-extra-lewd/master/src/module.json",
+	"download": "https://github.com/kineticdirt/foundry-extra-lewd/archive/refs/heads/master.zip",
+	"readme": "https://github.com/kineticdirt/foundry-extra-lewd/blob/master/README.md",
+	"bugs": "https://github.com/kineticdirt/foundry-extra-lewd/issues",
+	"allowBugReporter": true,
+	"dependencies": []
 }
