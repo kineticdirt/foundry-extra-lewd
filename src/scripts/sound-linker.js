@@ -67,13 +67,18 @@ export class SoundLinker {
 
 	static hookRenderPlaylistDirectory() {
 		Hooks.on('renderPlaylistDirectory', (app, html, data) => {
+			console.log("SoundLinker | renderPlaylistDirectory fired");
 			// Make playlists draggable onto the canvas
-			html.find('.directory-item').each((index, element) => {
+			const items = html.find('.directory-item');
+			console.log(`SoundLinker | Found ${items.length} playlist items`);
+
+			items.each((index, element) => {
 				const $item = $(element);
 				const playlistId = $item.data('document-id');
 				if (playlistId) {
 					$item.attr('draggable', 'true');
 					$item.on('dragstart', (ev) => {
+						console.log(`SoundLinker | Drag started for playlist ${playlistId}`);
 						ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify({
 							type: 'Playlist',
 							playlistId: playlistId
@@ -87,6 +92,7 @@ export class SoundLinker {
 
 	static hookRenderAmbientSoundConfig() {
 		Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
+			console.log("SoundLinker | renderAmbientSoundConfig fired");
 			const playlistSelect = $(`
         <div class="form-group">
           <label>${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylist`)}</label>
@@ -109,7 +115,15 @@ export class SoundLinker {
 				select.append(option);
 			});
 
-			html.find('input[name="path"]').closest('.form-group').before(playlistSelect);
+			const target = html.find('input[name="path"]').closest('.form-group');
+			if (target.length) {
+				console.log("SoundLinker | Injecting playlist selector");
+				target.before(playlistSelect);
+			} else {
+				console.warn("SoundLinker | Could not find input[name='path'] to inject selector");
+				// Fallback: try appending to the end of the form
+				html.find('form').append(playlistSelect);
+			}
 
 			select.on('change', async (ev) => {
 				const playlistId = select.val();
