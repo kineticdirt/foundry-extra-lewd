@@ -1,6 +1,6 @@
-# Foundry Extra Lewd
+# Foundry Extras
 
-A comprehensive Foundry VTT module that adds several powerful tools to enhance your game: Playlist Importing, Ambient Sound Linking, Custom Compendium Building, and a Character Clothing System.
+A comprehensive Foundry VTT module that adds several powerful tools to enhance your game: Playlist Importing, Ambient Sound Linking, Custom Compendium Building, Character Clothing System, and PDF Sheet Sync.
 
 ![Latest Release Download Count](https://img.shields.io/github/downloads/kineticdirt/foundry-extra-lewd/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
 
@@ -28,9 +28,16 @@ A dedicated UI for creating custom D&D 5e content.
 Manage character clothing slots with a visual interface.
 - **Slots**: Headwear, Necklace, Chest, Arms, Abdomen, Hips, Legwear, Misc.
 - **Drag & Drop**: Equip any item (from Compendiums or Items directory) into slots.
+- **Token Specific**: Open via Token HUD to manage outfits specific to that token instance.
 - **Access**:
     - **Actor Sheet**: Click the "Clothing" button in the window header.
     - **Token HUD**: Right-click a token and select the T-Shirt icon.
+
+### 5. PDF to Sheet Sync
+Sync form data from a linked PDF character sheet to the standard 5e sheet.
+- **Sync**: Click the "Sync PDF" button in the Actor Sheet header.
+- **Smart Detection**: Automatically finds the actor-specific PDF created by the `pdf-sheets` module.
+- **Debug Mode**: View all available PDF fields to help with mapping issues.
 
 ## Installation
 
@@ -44,7 +51,7 @@ Manage character clothing slots with a visual interface.
 ### Playlist Importer
 1.  Create a folder in your `FoundryVTT/Data/` directory (e.g., `music`).
 2.  Organize your audio files into subfolders (e.g., `music/Battle`, `music/Tavern`).
-3.  Go to **Module Settings** -> **Playlist Importer**.
+3.  Go to **Module Settings** -> **Foundry Extras**.
 4.  Set the **Base music directory** to your folder (e.g., `music`).
 5.  Go to the **Playlists** sidebar tab.
 6.  Click **Import Playlist** and follow the prompts.
@@ -67,6 +74,12 @@ Manage character clothing slots with a visual interface.
 2.  Click the **Clothing** button (Header or HUD T-Shirt icon).
 3.  Drag items from the **Items** sidebar or **Compendiums** into the desired slots.
 4.  Click the trash icon to remove an item.
+
+### PDF Sync
+1.  Ensure the actor has a PDF sheet assigned via the `pdf-sheets` module.
+2.  Open the Actor Sheet.
+3.  Click the **Sync PDF** button in the header.
+4.  Click **Sync Data** to populate the sheet, or **Debug Mappings** to inspect the PDF fields.
 
 ## Build Instructions
 

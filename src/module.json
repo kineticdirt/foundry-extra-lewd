@@ -1,14 +1,3 @@
-{
-	"id": "foundry-extra-lewd",
-	"name": "foundry-extra-lewd",
-	"title": "Foundry Extra Lewd",
-	"description": "A comprehensive module adding Playlist Importing, Sound Linking, Compendium Building, and Clothing System.",
-	"version": "2.0.0",
-	"author": "KineticDirt",
-	"type": "module",
-	"socket": true,
-	"includes": [
-		"./assets/**",
 		"./lang/**",
 		"./scripts/**",
 		"./styles/**",
