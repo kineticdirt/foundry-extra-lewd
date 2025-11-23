@@ -62,38 +62,9 @@ export class SoundLinker {
 					}
 				});
 			}
-		}
-	}
-
-	static hookRenderPlaylistDirectory() {
-		Hooks.on('renderPlaylistDirectory', (app, html, data) => {
-			console.log("SoundLinker | renderPlaylistDirectory fired");
-			// Make playlists draggable onto the canvas
-			const items = html.find('.directory-item');
-			console.log(`SoundLinker | Found ${items.length} playlist items`);
-
-			items.each((index, element) => {
-				const $item = $(element);
-				const playlistId = $item.data('document-id');
-				if (playlistId) {
-					$item.attr('draggable', 'true');
-					$item.on('dragstart', (ev) => {
-						console.log(`SoundLinker | Drag started for playlist ${playlistId}`);
-						ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify({
-							type: 'Playlist',
-							playlistId: playlistId
-						}));
-						ev.originalEvent.dataTransfer.effectAllowed = 'copy';
-					});
-				}
-			});
-		});
-	}
-
-	static hookRenderAmbientSoundConfig() {
-		Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
-			console.log("SoundLinker | renderAmbientSoundConfig fired");
-			const playlistSelect = $(`
+			Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
+				console.log("SoundLinker | renderAmbientSoundConfig fired");
+				const playlistSelect = $(`
         <div class="form-group">
           <label>${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylist`)}</label>
           <select name="playlist-select" style="width: 100%;">
@@ -103,45 +74,45 @@ export class SoundLinker {
         </div>
       `);
 
-			const select = playlistSelect.find('select');
-			const playlists = game.playlists?.contents || [];
+				const select = playlistSelect.find('select');
+				const playlists = game.playlists?.contents || [];
 
-			playlists.forEach(playlist => {
-				const option = $(`<option value="${playlist.id}">${playlist.name}</option>`);
-				const currentPlaylistId = app.object.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
-				if (currentPlaylistId === playlist.id) {
-					option.attr('selected', 'selected');
-				}
-				select.append(option);
-			});
-
-			const target = html.find('input[name="path"]').closest('.form-group');
-			if (target.length) {
-				console.log("SoundLinker | Injecting playlist selector");
-				target.before(playlistSelect);
-			} else {
-				console.warn("SoundLinker | Could not find input[name='path'] to inject selector");
-				// Fallback: try appending to the end of the form
-				html.find('form').append(playlistSelect);
-			}
-
-			select.on('change', async (ev) => {
-				const playlistId = select.val();
-				if (playlistId) {
-					const playlist = game.playlists?.get(playlistId);
-					if (playlist && playlist.sounds.size > 0) {
-						const firstSound = playlist.sounds.contents[0];
-						html.find('input[name="path"]').val(firstSound.path);
-						await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistId', playlistId);
-						await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistMode', true);
+				playlists.forEach(playlist => {
+					const option = $(`<option value="${playlist.id}">${playlist.name}</option>`);
+					const currentPlaylistId = app.object.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+					if (currentPlaylistId === playlist.id) {
+						option.attr('selected', 'selected');
 					}
+					select.append(option);
+				});
+
+				const target = html.find('input[name="path"]').closest('.form-group');
+				if (target.length) {
+					console.log("SoundLinker | Injecting playlist selector");
+					target.before(playlistSelect);
 				} else {
-					await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistId');
-					await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistMode');
+					console.warn("SoundLinker | Could not find input[name='path'] to inject selector");
+					// Fallback: try appending to the end of the form
+					html.find('form').append(playlistSelect);
 				}
+
+				select.on('change', async (ev) => {
+					const playlistId = select.val();
+					if (playlistId) {
+						const playlist = game.playlists?.get(playlistId);
+						if (playlist && playlist.sounds.size > 0) {
+							const firstSound = playlist.sounds.contents[0];
+							html.find('input[name="path"]').val(firstSound.path);
+							await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistId', playlistId);
+							await app.object.setFlag(CONSTANTS.MODULE_NAME, 'playlistMode', true);
+						}
+					} else {
+						await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistId');
+						await app.object.unsetFlag(CONSTANTS.MODULE_NAME, 'playlistMode');
+					}
+				});
 			});
-		});
-	}
+		}
 
 	static hookCanvasDrop() {
 		Hooks.on('canvasDrop', async (canvas, data) => {
