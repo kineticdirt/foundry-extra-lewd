@@ -48,15 +48,24 @@ export class ClothingSystem extends FormApplication {
 
 		if (!slotKey || data.type !== "Item") return;
 
-		const item = await Item.fromDropData(data);
+		let item = await Item.fromDropData(data);
 		if (!item) return;
+
+		// Inventory Integration: Check if item is owned by this actor
+		let ownedItem = item;
+		if (item.parent !== this.actor) {
+			// Create a copy in this actor's inventory
+			const createdItems = await this.actor.createEmbeddedDocuments("Item", [item.toObject()]);
+			ownedItem = createdItems[0];
+			ui.notifications.info(`Added ${ownedItem.name} to inventory.`);
+		}
 
 		// Store item data in the slot
 		const itemData = {
-			id: item.id,
-			name: item.name,
-			img: item.img,
-			uuid: item.uuid
+			id: ownedItem.id,
+			name: ownedItem.name,
+			img: ownedItem.img,
+			uuid: ownedItem.uuid
 		};
 
 		await this.actor.setFlag(CONSTANTS.MODULE_NAME, `clothing.${slotKey}`, itemData);
@@ -104,7 +113,8 @@ export class ClothingSystem extends FormApplication {
 				new ClothingSystem(actor).render(true);
 			});
 
-			html.find('.col.right').append(button);
+			// Add to left column as requested
+			html.find('.col.left').append(button);
 		});
 	}
 }
