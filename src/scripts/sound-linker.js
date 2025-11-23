@@ -39,31 +39,17 @@ export class SoundLinker {
 				// Get current sound path
 				const currentPath = ambientSound.document.path;
 
-				// Find current index
-				const sounds = Array.from(playlist.sounds);
-				const currentIndex = sounds.findIndex(s => s.path === currentPath);
-
-				// Pick next index (looping)
-				let nextIndex = currentIndex + 1;
-			});
-		}
-		Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
-			console.log("SoundLinker | renderAmbientSoundConfig fired");
-			const playlistSelect = $(`
-        <div class="form-group">
-          <label>${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylist`)}</label>
-          <select name="playlist-select" style="width: 100%;">
-            <option value="">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.NoPlaylist`)}</option>
-          </select>
-          <p class="notes">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylistHint`)}</p>
-        </div>
-      `);
+				<option value="">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.NoPlaylist`)}</option>
+          </select >
+					<p class="notes">${game.i18n.localize(`${CONSTANTS.MODULE_NAME}.SelectPlaylistHint`)}</p>
+        </div >
+					`);
 
 			const select = playlistSelect.find('select');
 			const playlists = game.playlists?.contents || [];
 
 			playlists.forEach(playlist => {
-				const option = $(`<option value="${playlist.id}">${playlist.name}</option>`);
+				const option = $(`< option value = "${playlist.id}" > ${ playlist.name }</option > `);
 				const currentPlaylistId = app.object.getFlag(CONSTANTS.MODULE_NAME, 'playlistId');
 				if (currentPlaylistId === playlist.id) {
 					option.attr('selected', 'selected');
@@ -132,7 +118,7 @@ export class SoundLinker {
 					};
 
 					await canvas.scene.createEmbeddedDocuments('AmbientSound', [ambientSoundData]);
-					ui.notifications.info(`Created Ambient Sound for playlist: ${playlist.name}`);
+					ui.notifications.info(`Created Ambient Sound for playlist: ${ playlist.name } `);
 					return false;
 				}
 			} catch (error) {
