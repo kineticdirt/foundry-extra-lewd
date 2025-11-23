@@ -50,7 +50,7 @@ export class CompendiumBuilder extends FormApplication {
 				// Add default class data here
 			}
 		};
-		await Item.create(itemData);
+		await Item.createDocuments([itemData]);
 		ui.notifications.info(`Created Class: ${name}`);
 	}
 
@@ -63,7 +63,7 @@ export class CompendiumBuilder extends FormApplication {
 				// Add default background data here
 			}
 		};
-		await Item.create(itemData);
+		await Item.createDocuments([itemData]);
 		ui.notifications.info(`Created Background: ${name}`);
 	}
 
@@ -81,7 +81,7 @@ export class CompendiumBuilder extends FormApplication {
 				}
 			}
 		};
-		await Item.create(itemData);
+		await Item.createDocuments([itemData]);
 		ui.notifications.info(`Created Proficiency: ${name}`);
 	}
 

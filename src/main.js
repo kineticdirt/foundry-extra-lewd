@@ -198,10 +198,6 @@ class PlaylistImporter {
 
 	_generatePlaylist(playlistName) {
 		return new Promise(async (resolve, reject) => {
-			// const is08x = game.data.version.split(".")[1] === "8"
-			// const playlistExists = is08x
-			//     ? await game.playlists.entities.find((p) => p.name === playlistName)
-			//     : await game.playlists.contents.find((p) => p.name === playlistName);
 			let playlist = game.playlists?.contents.find((p) => p.name === playlistName);
 			let playlistExists = playlist ? true : false;
 			if (playlistExists) {
@@ -213,7 +209,7 @@ class PlaylistImporter {
 			}
 			if (!playlistExists) {
 				try {
-					playlist = await Playlist.create({
+					const playlistData = {
 						name: playlistName,
 						permission: {
 							default: 0,
@@ -222,7 +218,11 @@ class PlaylistImporter {
 						sounds: [],
 						mode: 0,
 						playing: false,
-					});
+					};
+					// Use createDocuments for v12/v13 compliance
+					const createdPlaylists = await Playlist.createDocuments([playlistData]);
+					playlist = createdPlaylists[0];
+
 					await playlist?.setFlag(CONSTANTS.MODULE_NAME, 'isPlaylistImported', true);
 					if (this.DEBUG) console.log(`Playlist-Importer: Successfully created playlist: ${playlistName}`);
 					resolve(true);
@@ -252,10 +252,6 @@ class PlaylistImporter {
 		}
 		logVolume = AudioHelper.inputToVolume(logVolume);
 
-		// const is08x = game.data.version.split(".")[1] === "8"
-		// let playlist = is08x
-		//     ? game.playlists.entities.find((p) => p.name === playlistName)
-		//     : game.playlists.contents.find((p) => p.name === playlistName);
 		const playlist = game.playlists?.contents.find((p) => p.name === playlistName);
 
 		if (!playlist) {
@@ -281,8 +277,6 @@ class PlaylistImporter {
 								if (dupCheck && currentSound) {
 									// DO NOTHING
 								} else {
-									// if (!dupCheck || currentList[(playlistName + trackName).toLowerCase()] != true) {
-									// A weird way of saying always succeed if dupCheck is on otherwise see if the track is in the list
 									if (this.DEBUG) console.log(`Playlist-importer: Song ${trackName} not in list.`);
 									await this._addSong(
 										currentList,
@@ -313,11 +307,6 @@ class PlaylistImporter {
 		currentList[(playlistName + trackName).toLowerCase()] = true;
 		await game.settings.set(CONSTANTS.MODULE_NAME, 'songs', currentList);
 
-		// const is08x = game.data.version.split(".")[1] === "8"
-		// if (is08x)
-		//     await playlist.createEmbeddedEntity("PlaylistSound", { name: trackName, path: fileName, repeat: shouldRepeat, volume: logVolume }, {});
-		// else
-		//     await playlist.createEmbeddedDocuments("PlaylistSound", [{ name: trackName, path: fileName, repeat: shouldRepeat, volume: logVolume }], {});
 		await playlist.createEmbeddedDocuments(
 			'PlaylistSound',
 			[{ name: trackName, path: fileName, repeat: shouldRepeat, volume: logVolume }],

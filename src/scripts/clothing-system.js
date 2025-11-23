@@ -48,7 +48,7 @@ export class ClothingSystem extends FormApplication {
 
 		if (!slotKey || data.type !== "Item") return;
 
-		const item = await Item.implementation.fromDropData(data);
+		const item = await Item.fromDropData(data);
 		if (!item) return;
 
 		// Store item data in the slot
