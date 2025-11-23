@@ -25,17 +25,44 @@
 		"./main.js"
 	],
 	"styles": [],
-	"packs": [],
-	"compatibility": {
-		"minimum": "12",
-		"verified": "13",
-		"maximum": "13"
+	"./lang/**",
+	"./scripts/**",
+	"./styles/**",
+	"./templates/**",
+	"./module.json",
+	"./README.md",
+	"./icons/**",
+	"./packs/**"
+],
+"media": [],
+"languages": [
+	{
+		"lang": "en",
+		"name": "English",
+		"path": "lang/en.json"
 	},
-	"url": "https://github.com/kineticdirt/foundry-extra-lewd",
-	"manifest": "https://raw.githubusercontent.com/kineticdirt/foundry-extra-lewd/master/src/module.json",
-	"download": "https://github.com/kineticdirt/foundry-extra-lewd/archive/refs/heads/master.zip",
-	"readme": "https://github.com/kineticdirt/foundry-extra-lewd/blob/master/README.md",
-	"bugs": "https://github.com/kineticdirt/foundry-extra-lewd/issues",
-	"allowBugReporter": true,
-	"dependencies": []
+	{
+		"lang": "es",
+		"name": "Español",
+		"path": "lang/es.json"
+	}
+],
+"scripts": [],
+"esmodules": [
+	"./main.js"
+],
+"styles": [],
+"packs": [],
+"compatibility": {
+	"minimum": "12",
+	"verified": "13",
+	"maximum": "13"
+},
+"url": "https://github.com/kineticdirt/foundry-extras",
+"manifest": "https://raw.githubusercontent.com/kineticdirt/foundry-extras/master/src/module.json",
+"download": "https://github.com/kineticdirt/foundry-extras/archive/refs/heads/master.zip",
+"readme": "https://github.com/kineticdirt/foundry-extras/blob/master/README.md",
+"bugs": "https://github.com/kineticdirt/foundry-extras/issues",
+"allowBugReporter": true,
+"dependencies": []
 }

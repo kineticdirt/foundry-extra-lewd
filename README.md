@@ -2,7 +2,7 @@
 
 A comprehensive Foundry VTT module that adds several powerful tools to enhance your game: Playlist Importing, Ambient Sound Linking, Custom Compendium Building, Character Clothing System, and PDF Sheet Sync.
 
-![Latest Release Download Count](https://img.shields.io/github/downloads/kineticdirt/foundry-extra-lewd/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
+![Latest Release Download Count](https://img.shields.io/github/downloads/kineticdirt/foundry-extras/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
 
 ## Features
 
@@ -41,7 +41,7 @@ Sync form data from a linked PDF character sheet to the standard 5e sheet.
 
 ## Installation
 
-1.  Copy the Manifest URL: `https://raw.githubusercontent.com/kineticdirt/foundry-extra-lewd/master/src/module.json`
+1.  Copy the Manifest URL: `https://raw.githubusercontent.com/kineticdirt/foundry-extras/master/src/module.json`
 2.  In Foundry VTT, go to **Add-on Modules** -> **Install Module**.
 3.  Paste the URL and click **Install**.
 4.  Enable the module in your World's **Manage Modules** settings.
