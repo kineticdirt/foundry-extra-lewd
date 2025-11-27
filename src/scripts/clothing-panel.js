@@ -252,20 +252,35 @@ export class ClothingPanel extends Application {
 			};
 		});
 
-		// Drag and Drop handlers for visual feedback
+		// Drag and Drop handlers - Make slots interactive
 		const slots = root.querySelectorAll('.clothing-slot');
 		slots.forEach(slot => {
-			slot.ondragover = (ev) => {
+			// Visual feedback on dragover
+			slot.addEventListener('dragover', (ev) => {
 				ev.preventDefault();
+				ev.dataTransfer.dropEffect = 'copy';
 				slot.classList.add('drag-over');
-			};
-			slot.ondragleave = (ev) => {
+			});
+			
+			// Remove highlight when drag leaves
+			slot.addEventListener('dragleave', (ev) => {
 				slot.classList.remove('drag-over');
-			};
-			slot.ondrop = (ev) => {
+			});
+			
+			// Handle drop
+			slot.addEventListener('drop', async (ev) => {
+				ev.preventDefault();
+				ev.stopPropagation();
 				slot.classList.remove('drag-over');
-			};
+				
+				console.log('ClothingPanel: Drop event on slot', slot.dataset.slot);
+				
+				// Call the _onDrop handler
+				await this._onDrop(ev);
+			});
 		});
+		
+		console.log('ClothingPanel: Drag/drop handlers attached to', slots.length, 'slots');
 	}
 
 	/**
