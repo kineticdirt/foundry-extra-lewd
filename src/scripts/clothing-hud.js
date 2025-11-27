@@ -31,6 +31,14 @@ export class ClothingHUD extends Application {
 		};
 	}
 
+	// ============================================
+	// BIND TO TOKEN - Only called when a token is selected
+	// ============================================
+	// This method is ONLY called from:
+	// 1. controlToken hook when token is selected
+	// 2. Token HUD icon click
+	// 3. canvasReady hook if tokens already selected
+	// It should NEVER be called from Settings or other windows
 	bind(token) {
 		if (token === this._token) return;
 
@@ -38,7 +46,12 @@ export class ClothingHUD extends Application {
 		if (!token || !token.actor?.isOwner) {
 			this._token = null;
 			this._actor = null;
-			this.close();
+			// Render empty state instead of closing
+			if (!this.rendered) {
+				this.render(true);
+			} else {
+				this.render();
+			}
 			return;
 		}
 
@@ -47,8 +60,6 @@ export class ClothingHUD extends Application {
 
 		if (this._actor) {
 			this.render(true);
-		} else {
-			this.close();
 		}
 	}
 

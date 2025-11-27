@@ -33,23 +33,56 @@ Hooks.once('ready', () => {
 	// Initialize Playlist Importer (Legacy support)
 	PLIMP.playlistImporter = new PlaylistImporter();
 
-	// Initialize Clothing HUD
+	// ============================================
+	// CLOTHING HUD INITIALIZATION
+	// ============================================
+	// Create the HUD instance but DO NOT render it yet
+	// It will only render when a token is selected via the bind() method
+	// This ensures it NEVER appears in Settings or other windows
 	ui.clothingHUD = new ClothingHUD();
-	ui.clothingHUD.render(true); // Render once to attach to DOM
+	// DO NOT call render() here - it will render when token is selected
 
-	// Bind Clothing HUD on token control
+	// ============================================
+	// TOKEN SELECTION HOOK - Only fires when selecting/deselecting tokens
+	// ============================================
+	// This hook ONLY fires when tokens are selected on the canvas
+	// It does NOT fire for Settings, Actor sheets, or other windows
 	Hooks.on('controlToken', (token, controlled) => {
-		console.log(`Foundry Extras | controlToken hook fired for ${token.name}, controlled: ${controlled}`);
-		if (controlled) {
-			console.log("Foundry Extras | Binding HUD to token");
+		if (controlled && token?.actor?.isOwner) {
+			// Token was selected - show the HUD on the right side
 			ui.clothingHUD.bind(token);
 		} else {
+			// Token was deselected - check if other tokens are still selected
 			const controlledTokens = canvas.tokens?.controlled || [];
-			console.log(`Foundry Extras | Token released. Remaining controlled: ${controlledTokens.length}`);
 			if (controlledTokens.length > 0) {
-				ui.clothingHUD.bind(controlledTokens[0]);
+				const firstToken = controlledTokens.find(t => t.actor?.isOwner);
+				if (firstToken) {
+					// Another token is selected - bind to that one
+					ui.clothingHUD.bind(firstToken);
+				} else {
+					// No owned tokens selected - hide HUD
+					ui.clothingHUD.bind(null);
+				}
 			} else {
+				// No tokens selected - hide HUD
 				ui.clothingHUD.bind(null);
+			}
+		}
+	});
+
+	// ============================================
+	// CANVAS READY HOOK - Check for already-selected tokens when canvas loads
+	// ============================================
+	// This only fires once when the canvas is ready
+	// It checks if tokens are already selected and shows HUD if so
+	Hooks.once('canvasReady', () => {
+		const controlledTokens = canvas.tokens?.controlled || [];
+		if (controlledTokens.length > 0) {
+			const firstToken = controlledTokens.find(t => t.actor?.isOwner);
+			if (firstToken) {
+				setTimeout(() => {
+					ui.clothingHUD.bind(firstToken);
+				}, 500);
 			}
 		}
 	});
