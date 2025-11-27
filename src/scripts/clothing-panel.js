@@ -240,93 +240,85 @@ export class ClothingPanel extends Application {
 	async _render(force, options) {
 		await super._render(force, options);
 
-		// Use setTimeout to ensure DOM is ready
-		setTimeout(() => {
-			if (!this.element || !this.element.length) {
-				console.warn('ClothingPanel: element not found after render');
-				return;
-			}
+		// Use requestAnimationFrame and setTimeout to ensure DOM is fully ready
+		requestAnimationFrame(() => {
+			setTimeout(() => {
+				if (!this.element || !this.element.length) {
+					console.error('ClothingPanel: element not found after render');
+					return;
+				}
 
-			// Hide Foundry's window frame
-			const $windowApp = this.element.closest('.window-app');
-			if (!$windowApp || !$windowApp.length) {
-				console.warn('ClothingPanel: window-app not found');
-				return;
-			}
+				// Hide Foundry's window frame
+				const $windowApp = this.element.closest('.window-app');
+				if (!$windowApp || !$windowApp.length) {
+					console.error('ClothingPanel: window-app not found');
+					return;
+				}
 
-			const windowApp = $windowApp[0];
-			windowApp.classList.add('clothing-panel-window');
-			windowApp.setAttribute('data-app-id', 'clothing-panel');
+				const windowApp = $windowApp[0];
+				windowApp.classList.add('clothing-panel-window');
+				windowApp.setAttribute('data-app-id', 'clothing-panel');
 
-			// Remove header
-			const windowHeader = windowApp.querySelector('.window-header');
-			if (windowHeader) {
-				windowHeader.remove();
-			}
+				// Remove header
+				const windowHeader = windowApp.querySelector('.window-header');
+				if (windowHeader) {
+					windowHeader.remove();
+				}
 
-			// Style window-app
-			windowApp.style.cssText = 'background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;';
+				// Style window-app
+				windowApp.style.cssText = 'background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;';
 
-			// Style window-content
-			const windowContent = windowApp.querySelector('.window-content');
-			if (windowContent) {
-				windowContent.style.cssText = 'padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; overflow: visible !important;';
-			}
+				// Style window-content
+				const windowContent = windowApp.querySelector('.window-content');
+				if (windowContent) {
+					windowContent.style.cssText = 'padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; overflow: visible !important;';
+				}
 
-			// Position to the LEFT of the chat sidebar (right side of screen)
-			// Find the chat sidebar/panel element - Foundry uses #sidebar for the right sidebar
-			const chatSidebar = document.querySelector('#sidebar') || 
-								document.querySelector('.sidebar') ||
-								document.querySelector('#chat-log') ||
-								document.querySelector('.chat-log');
-			
-			if (chatSidebar) {
-				const sidebarRect = chatSidebar.getBoundingClientRect();
-				const panelWidth = 76; // 60px width + 8px padding on each side
-				const gap = 10; // Gap between panel and sidebar
+				// Position to the LEFT of the chat sidebar (right side of screen)
+				// Find the chat sidebar - Foundry uses #sidebar for the right sidebar
+				const chatSidebar = document.querySelector('#sidebar');
 				
-				// Position panel to the LEFT of the sidebar using 'left' positioning
-				// Panel's right edge = sidebar's left edge - gap
-				// Panel's left edge = sidebar's left edge - gap - panelWidth
-				const panelLeft = sidebarRect.left - panelWidth - gap;
-				
-				$windowApp.css({
-					position: 'fixed',
-					left: `${panelLeft}px`, // Position to left of sidebar
-					top: `${sidebarRect.top + 20}px`, // Align with top of sidebar
-					right: 'auto',
-					bottom: 'auto',
-					zIndex: 100,
-					display: 'block',
-					visibility: 'visible',
-					opacity: '1'
-				});
-				
-				console.log('ClothingPanel: Positioned at left:', panelLeft, 'px (sidebar left:', sidebarRect.left, ', panel width:', panelWidth, ', gap:', gap, ')');
-			} else {
-				// Fallback: position on right side, left of typical chat location
-				// Foundry chat sidebar is typically ~300px wide from right edge
-				const screenWidth = window.innerWidth;
-				const chatWidth = 300;
-				const panelWidth = 76;
-				const gap = 10;
-				const panelLeft = screenWidth - chatWidth - panelWidth - gap;
-				
-				$windowApp.css({
-					position: 'fixed',
-					left: `${panelLeft}px`,
-					top: '50%',
-					right: 'auto',
-					bottom: 'auto',
-					transform: 'translateY(-50%)',
-					zIndex: 100,
-					display: 'block',
-					visibility: 'visible',
-					opacity: '1'
-				});
-				console.log('ClothingPanel: Using fallback positioning (sidebar not found), left:', panelLeft);
-			}
-		}, 100);
+				if (chatSidebar) {
+					const sidebarRect = chatSidebar.getBoundingClientRect();
+					const panelWidth = 76;
+					const gap = 10;
+					const panelLeft = sidebarRect.left - panelWidth - gap;
+					
+					// Apply positioning DIRECTLY to windowApp element
+					windowApp.style.position = 'fixed';
+					windowApp.style.left = `${panelLeft}px`;
+					windowApp.style.top = `${sidebarRect.top + 20}px`;
+					windowApp.style.right = 'auto';
+					windowApp.style.bottom = 'auto';
+					windowApp.style.zIndex = '100';
+					windowApp.style.display = 'block';
+					windowApp.style.visibility = 'visible';
+					windowApp.style.opacity = '1';
+					
+					console.log('ClothingPanel: Positioned at left:', panelLeft, 'px');
+				} else {
+					// Fallback: position on right side, left of typical chat location
+					const screenWidth = window.innerWidth;
+					const chatWidth = 300;
+					const panelWidth = 76;
+					const gap = 10;
+					const panelLeft = screenWidth - chatWidth - panelWidth - gap;
+					
+					windowApp.style.position = 'fixed';
+					windowApp.style.left = `${panelLeft}px`;
+					windowApp.style.top = '50%';
+					windowApp.style.right = 'auto';
+					windowApp.style.bottom = 'auto';
+					windowApp.style.transform = 'translateY(-50%)';
+					windowApp.style.zIndex = '100';
+					windowApp.style.display = 'block';
+					windowApp.style.visibility = 'visible';
+					windowApp.style.opacity = '1';
+					
+					console.log('ClothingPanel: Using fallback positioning, left:', panelLeft);
+				}
+			}, 200);
+		});
 	}
 }
 
