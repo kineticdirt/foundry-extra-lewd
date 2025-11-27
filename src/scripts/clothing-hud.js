@@ -12,13 +12,11 @@ export class ClothingHUD extends Application {
 		return mergeObject(super.defaultOptions, {
 			id: 'clothing-hud',
 			template: `modules/${CONSTANTS.MODULE_NAME}/templates/clothing-hud.hbs`,
-			popOut: true,
+			popOut: false,
 			minimizable: false,
 			resizable: false,
 			classes: ['clothing-hud-app'],
-			dragDrop: [{ dragSelector: ".clothing-slot", dropSelector: ".clothing-slot" }],
-			top: 100,
-			right: 20
+			dragDrop: [{ dragSelector: ".clothing-slot", dropSelector: ".clothing-slot" }]
 		});
 	}
 
