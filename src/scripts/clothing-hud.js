@@ -222,12 +222,24 @@ export class ClothingHUD extends Application {
 		
 		// Use setTimeout to ensure DOM is fully rendered
 		setTimeout(() => {
-			if (this.element) {
-				// Hide Foundry's window frame - target the window-app wrapper
-				const windowApp = this.element.closest('.window-app');
-				if (windowApp) {
-					windowApp.classList.add('clothing-hud-window');
-					windowApp.setAttribute('data-app-id', 'clothing-hud');
+			if (!this.element || !this.element.length) {
+				console.warn('ClothingHUD: element not found after render');
+				return;
+			}
+
+			// Hide Foundry's window frame - target the window-app wrapper
+			// this.element is a jQuery object, so closest() returns jQuery object
+			const $windowApp = this.element.closest('.window-app');
+			if (!$windowApp || !$windowApp.length) {
+				console.warn('ClothingHUD: window-app not found');
+				return;
+			}
+
+			// Get the actual DOM element
+			const windowApp = $windowApp[0];
+			
+			windowApp.classList.add('clothing-hud-window');
+			windowApp.setAttribute('data-app-id', 'clothing-hud');
 					
 					// Aggressively hide header and all its children
 					const windowHeader = windowApp.querySelector('.window-header');
@@ -275,38 +287,45 @@ export class ClothingHUD extends Application {
 				// Ensure it's visible and positioned correctly
 				hudDiv.css({ display: 'flex' });
 
-				// Position the window-app wrapper, not the inner element
-				if (windowApp) {
-					// Calculate right offset to avoid chat sidebar (typically 300px wide)
-					const chatSidebar = document.querySelector('#sidebar') || document.querySelector('.sidebar');
-					const chatWidth = chatSidebar ? chatSidebar.offsetWidth : 300;
-					const rightOffset = chatWidth + 20; // 20px padding from chat
-					
-					// Restore Position (only if user has manually moved it)
-					const position = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPosition');
-					if (position && position.left && position.top && position.left !== 'auto') {
-						// User has manually positioned it
-						$(windowApp).css({
-							position: 'fixed',
-							left: position.left,
-							top: position.top,
-							bottom: 'auto',
-							right: 'auto',
-							transform: 'none'
-						});
-					} else {
-						// Default to right side, accounting for chat sidebar
-						$(windowApp).css({
-							position: 'fixed',
-							left: 'auto',
-							right: `${rightOffset}px`,
-							top: '50%',
-							bottom: 'auto',
-							transform: 'translateY(-50%)',
-							zIndex: 50
-						});
-					}
-				}
+			// Position the window-app wrapper, not the inner element
+			// Calculate right offset to avoid chat sidebar (typically 300px wide)
+			const chatSidebar = document.querySelector('#sidebar') || document.querySelector('.sidebar');
+			const chatWidth = chatSidebar ? chatSidebar.offsetWidth : 300;
+			const rightOffset = chatWidth + 20; // 20px padding from chat
+			
+			// Restore Position (only if user has manually moved it)
+			const position = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPosition');
+			if (position && position.left && position.top && position.left !== 'auto' && typeof position.left === 'string' && position.left.includes('px')) {
+				// User has manually positioned it (has actual pixel values)
+				$windowApp.css({
+					position: 'fixed',
+					left: position.left,
+					top: position.top,
+					bottom: 'auto',
+					right: 'auto',
+					transform: 'none',
+					zIndex: 50,
+					display: 'block',
+					visibility: 'visible',
+					opacity: '1'
+				});
+			} else {
+				// Default to right side, accounting for chat sidebar
+				$windowApp.css({
+					position: 'fixed',
+					left: 'auto',
+					right: `${rightOffset}px`,
+					top: '50%',
+					bottom: 'auto',
+					transform: 'translateY(-50%)',
+					zIndex: 50,
+					display: 'block',
+					visibility: 'visible',
+					opacity: '1'
+				});
+			}
+
+			console.log('ClothingHUD: Positioned at', $windowApp.css('right'), 'from right edge');
 			}
 		}, 0);
 	}
