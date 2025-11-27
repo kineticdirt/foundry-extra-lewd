@@ -1,33 +1,45 @@
 <div class="clothing-panel">
-	<div class="silhouette-icon">
-		<img src="modules/foundry-extras/icons/woman-silhouette.png" alt="Woman Silhouette" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 500" style="display:none;">
-			<path fill="rgba(255,255,255,0.3)" d="M50 20 Q35 20 30 40 L25 60 Q20 80 25 100 L30 140 Q35 180 40 220 L45 280 Q48 320 50 360 L55 400 Q58 440 60 460 L65 480 Q70 490 50 490 Q30 490 35 480 L40 460 Q42 440 45 400 Q48 360 50 320 L55 280 Q60 220 65 180 L70 140 Q75 100 70 60 L65 40 Q60 20 50 20 Z"/>
-		</svg>
+	<div class="panel-header">
+		<div class="panel-title">Clothing</div>
 	</div>
-	<div class="slots-container">
-		{{#each slots as |slot|}}
-		<div class="clothing-slot {{#if slot.item}}filled{{else}}empty{{/if}} slot-{{slot.key}}" 
-			 data-slot="{{slot.key}}"
-			 data-body-part="{{slot.bodyPart}}"
-			 data-layer="{{slot.layer}}"
-			 title="{{slot.label}}{{#if slot.item}}: {{slot.item.name}}{{/if}}">
-			
-			{{#if slot.item.img}}
-			<img src="{{slot.item.img}}" alt="{{slot.item.name}}">
-			{{else}}
-			<div class="slot-placeholder">
-				<i class="{{slot.icon}}"></i>
-			</div>
-			{{/if}}
-
-			{{#if slot.item}}
-			<div class="remove-item">
-				<i class="fas fa-times"></i>
-			</div>
-			{{/if}}
+	<div class="panel-content">
+		<div class="silhouette-icon">
+			<img src="modules/foundry-extras/icons/womans-sillhouette.png" alt="Woman Silhouette">
 		</div>
-		{{/each}}
+		<div class="slots-container">
+			{{#each bodyPartGroups as |group|}}
+			<div class="body-part-row" data-body-part="{{group.label}}">
+				<div class="body-part-label">{{group.label}}</div>
+				<div class="body-part-slots">
+					{{#each group.slots as |slot|}}
+					<div class="clothing-slot {{#if slot.item}}filled{{else}}empty{{/if}} slot-{{slot.key}}" 
+						 data-slot="{{slot.key}}"
+						 data-body-part="{{slot.bodyPart}}"
+						 data-layer="{{slot.layer}}"
+						 title="{{slot.label}}{{#if slot.item}}: {{slot.item.name}}{{/if}}">
+						
+						{{#if slot.item.img}}
+						<img src="{{slot.item.img}}" alt="{{slot.item.name}}">
+						{{else}}
+						<div class="slot-placeholder">
+							<i class="{{slot.icon}}"></i>
+						</div>
+						{{/if}}
+
+						{{#if slot.item}}
+						<div class="remove-item">
+							<i class="fas fa-times"></i>
+						</div>
+						{{/if}}
+					</div>
+					{{/each}}
+				</div>
+			</div>
+			{{/each}}
+		</div>
 	</div>
+	<button class="panel-minimize-btn" title="Minimize/Maximize">
+		<i class="fas fa-chevron-up"></i>
+	</button>
 </div>
 
