@@ -1,7 +1,9 @@
 <div class="clothing-panel">
+	<div class="silhouette-background"></div>
 	{{#each slots as |slot|}}
-	<div class="clothing-slot {{#if slot.item}}filled{{else}}empty{{/if}}" 
+	<div class="clothing-slot {{#if slot.item}}filled{{else}}empty{{/if}} slot-{{slot.key}}" 
 		 data-slot="{{slot.key}}"
+		 data-body-part="{{slot.bodyPart}}"
 		 title="{{slot.label}}{{#if slot.item}}: {{slot.item.name}}{{/if}}">
 		
 		{{#if slot.item.img}}

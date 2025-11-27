@@ -45,17 +45,18 @@ export class ClothingPanel extends Application {
 
 	/**
 	 * Get empty slots structure (8 slots total)
+	 * Each slot has a bodyPart property for CSS positioning
 	 */
 	_getEmptySlots() {
 		return [
-			{ key: 'head_1', label: 'Head', icon: 'fas fa-head-side', item: null },
-			{ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: null },
-			{ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: null },
-			{ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: null },
-			{ key: 'abdomen_1', label: 'Abdomen', icon: 'fas fa-user', item: null },
-			{ key: 'hips_1', label: 'Hips', icon: 'fas fa-user-friends', item: null },
-			{ key: 'legs_1', label: 'Legs', icon: 'fas fa-socks', item: null },
-			{ key: 'feet_1', label: 'Feet', icon: 'fas fa-shoe-prints', item: null }
+			{ key: 'head_1', label: 'Head', icon: 'fas fa-head-side', item: null, bodyPart: 'head' },
+			{ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: null, bodyPart: 'neck' },
+			{ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: null, bodyPart: 'chest' },
+			{ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: null, bodyPart: 'arms' },
+			{ key: 'abdomen_1', label: 'Abdomen', icon: 'fas fa-user', item: null, bodyPart: 'abdomen' },
+			{ key: 'hips_1', label: 'Hips', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips' },
+			{ key: 'legs_1', label: 'Legs', icon: 'fas fa-socks', item: null, bodyPart: 'legs' },
+			{ key: 'feet_1', label: 'Feet', icon: 'fas fa-shoe-prints', item: null, bodyPart: 'feet' }
 		];
 	}
 
@@ -79,59 +80,59 @@ export class ClothingPanel extends Application {
 		
 		// Head
 		if (sections.head?.slots?.[0]) {
-			slots.push(sections.head.slots[0]);
+			slots.push({ ...sections.head.slots[0], bodyPart: 'head' });
 		} else {
-			slots.push({ key: 'head_1', label: 'Head', icon: 'fas fa-head-side', item: null });
+			slots.push({ key: 'head_1', label: 'Head', icon: 'fas fa-head-side', item: null, bodyPart: 'head' });
 		}
 
 		// Necklace (special - check if exists in clothing data)
 		const clothingData = this._token?.document?.getFlag(CONSTANTS.MODULE_NAME, 'clothing') || {};
 		if (clothingData.necklace) {
-			slots.push({ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: clothingData.necklace });
+			slots.push({ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: clothingData.necklace, bodyPart: 'neck' });
 		} else {
-			slots.push({ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: null });
+			slots.push({ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: null, bodyPart: 'neck' });
 		}
 
 		// Chest (special)
 		if (clothingData.chest) {
-			slots.push({ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: clothingData.chest });
+			slots.push({ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: clothingData.chest, bodyPart: 'chest' });
 		} else {
-			slots.push({ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: null });
+			slots.push({ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: null, bodyPart: 'chest' });
 		}
 
 		// Arms (special)
 		if (clothingData.arms) {
-			slots.push({ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: clothingData.arms });
+			slots.push({ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: clothingData.arms, bodyPart: 'arms' });
 		} else {
-			slots.push({ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: null });
+			slots.push({ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: null, bodyPart: 'arms' });
 		}
 
 		// Abdomen
 		if (sections.abdomen?.slots?.[0]) {
-			slots.push(sections.abdomen.slots[0]);
+			slots.push({ ...sections.abdomen.slots[0], bodyPart: 'abdomen' });
 		} else {
-			slots.push({ key: 'abdomen_1', label: 'Abdomen', icon: 'fas fa-user', item: null });
+			slots.push({ key: 'abdomen_1', label: 'Abdomen', icon: 'fas fa-user', item: null, bodyPart: 'abdomen' });
 		}
 
 		// Hips
 		if (sections.hips?.slots?.[0]) {
-			slots.push(sections.hips.slots[0]);
+			slots.push({ ...sections.hips.slots[0], bodyPart: 'hips' });
 		} else {
-			slots.push({ key: 'hips_1', label: 'Hips', icon: 'fas fa-user-friends', item: null });
+			slots.push({ key: 'hips_1', label: 'Hips', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips' });
 		}
 
 		// Legs
 		if (sections.legs?.slots?.[0]) {
-			slots.push(sections.legs.slots[0]);
+			slots.push({ ...sections.legs.slots[0], bodyPart: 'legs' });
 		} else {
-			slots.push({ key: 'legs_1', label: 'Legs', icon: 'fas fa-socks', item: null });
+			slots.push({ key: 'legs_1', label: 'Legs', icon: 'fas fa-socks', item: null, bodyPart: 'legs' });
 		}
 
 		// Feet
 		if (sections.feet?.slots?.[0]) {
-			slots.push(sections.feet.slots[0]);
+			slots.push({ ...sections.feet.slots[0], bodyPart: 'feet' });
 		} else {
-			slots.push({ key: 'feet_1', label: 'Feet', icon: 'fas fa-shoe-prints', item: null });
+			slots.push({ key: 'feet_1', label: 'Feet', icon: 'fas fa-shoe-prints', item: null, bodyPart: 'feet' });
 		}
 
 		return slots;

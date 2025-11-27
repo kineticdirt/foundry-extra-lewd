@@ -348,35 +348,93 @@
 
 /* Clothing Panel Container */
 .clothing-panel {
-	width: 60px;
-	min-height: 400px; /* Enough height for 8 slots */
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	width: 80px;
+	min-height: 500px; /* Height to accommodate silhouette */
 	padding: 8px;
 	background: rgba(0, 0, 0, 0.85);
 	border: 2px solid #444;
 	border-radius: 8px;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 	position: relative;
-	/* Woman silhouette background - can be replaced with custom image */
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 400"><path fill="rgba(255,255,255,0.08)" d="M30 20 Q20 20 18 35 L16 50 Q14 70 18 90 L22 130 Q26 170 28 200 L30 250 Q32 300 34 350 L36 380 Q38 390 30 390 Q22 390 24 380 L26 350 Q28 300 30 250 L32 200 Q34 170 38 130 L42 90 Q46 70 44 50 L42 35 Q40 20 30 20 Z M25 100 Q20 100 18 110 L16 120 Q14 130 16 140 L18 150 Q20 160 25 160 Q30 160 32 150 L34 140 Q36 130 34 120 L32 110 Q30 100 25 100 Z"/></svg>');
-	background-size: 50px auto;
+	display: block;
+}
+
+/* Silhouette Background */
+.clothing-panel .silhouette-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('modules/foundry-extras/icons/woman-silhouette.png');
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.3;
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* Fallback if image not found - use SVG silhouette */
+.clothing-panel .silhouette-background::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 500"><path fill="rgba(255,255,255,0.2)" d="M50 20 Q35 20 30 40 L25 60 Q20 80 25 100 L30 140 Q35 180 40 220 L45 280 Q48 320 50 360 Q L55 400 Q58 440 60 460 L65 480 Q70 490 50 490 Q30 490 35 480 L40 460 Q42 440 45 400 Q48 360 50 320 L55 280 Q60 220 65 180 L70 140 Q75 100 70 60 L65 40 Q60 20 50 20 Z"/></svg>');
+	background-size: 60px auto;
 	background-position: center;
 	background-repeat: no-repeat;
 }
 
-/* Clothing Panel Slots - Vertical Stack */
+/* Clothing Panel Slots - Positioned absolutely over silhouette */
 .clothing-panel .clothing-slot {
 	width: 44px;
 	height: 44px;
 	border: 1px dashed #555;
 	border-radius: 4px;
-	position: relative;
+	position: absolute;
 	cursor: pointer;
 	background: rgba(255, 255, 255, 0.1);
 	transition: all 0.2s ease;
-	flex-shrink: 0;
+	z-index: 10;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+/* Position slots to align with body parts on silhouette */
+.clothing-panel .clothing-slot[data-body-part="head"] {
+	top: 5%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="neck"] {
+	top: 12%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="chest"] {
+	top: 20%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="arms"] {
+	top: 25%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="abdomen"] {
+	top: 40%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="hips"] {
+	top: 55%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="legs"] {
+	top: 70%;
+}
+
+.clothing-panel .clothing-slot[data-body-part="feet"] {
+	top: 85%;
 }
 
 .clothing-panel .clothing-slot:hover {
