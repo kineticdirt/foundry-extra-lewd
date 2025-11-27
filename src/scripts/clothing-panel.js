@@ -273,36 +273,42 @@ export class ClothingPanel extends Application {
 				windowContent.style.cssText = 'padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; overflow: visible !important;';
 			}
 
-			// Position to the LEFT of chat input
-			// Try multiple selectors to find the chat input
-			const chatInput = document.querySelector('#chat-message') || 
-							  document.querySelector('.chat-message') ||
-							  document.querySelector('#chat-form input[type="text"]') ||
-							  document.querySelector('#chat-log') ||
-							  document.querySelector('.chat-log');
+			// Position to the LEFT of the chat sidebar (right side of screen)
+			// Find the chat sidebar/panel element
+			const chatSidebar = document.querySelector('#sidebar') || 
+								document.querySelector('.sidebar') ||
+								document.querySelector('#chat') ||
+								document.querySelector('.chat-sidebar') ||
+								document.querySelector('#chat-log') ||
+								document.querySelector('.chat-log');
 			
-			if (chatInput) {
-				const chatRect = chatInput.getBoundingClientRect();
+			if (chatSidebar) {
+				const sidebarRect = chatSidebar.getBoundingClientRect();
 				const panelWidth = 76; // 60px width + 8px padding on each side
+				const panelHeight = 400; // Approximate height for 8 slots
+				
+				// Position to the LEFT of the sidebar, vertically centered or aligned to top
 				$windowApp.css({
 					position: 'fixed',
-					left: `${Math.max(10, chatRect.left - panelWidth - 10)}px`, // Position to left with 10px gap
-					bottom: `${window.innerHeight - chatRect.bottom + 5}px`, // Align with chat input, slightly above
-					right: 'auto',
-					top: 'auto',
+					right: `${window.innerWidth - sidebarRect.left + 10}px`, // Position to left of sidebar with 10px gap
+					top: `${sidebarRect.top + 20}px`, // Align with top of sidebar, with small offset
+					left: 'auto',
+					bottom: 'auto',
 					zIndex: 100,
 					display: 'block',
 					visibility: 'visible',
 					opacity: '1'
 				});
 			} else {
-				// Fallback: position at bottom-left (typical chat location)
+				// Fallback: position on right side, left of typical chat location
+				// Foundry chat is typically ~300px from right edge
 				$windowApp.css({
 					position: 'fixed',
-					left: '20px',
-					bottom: '100px', // Above typical chat input location
-					right: 'auto',
-					top: 'auto',
+					right: '320px', // 300px for chat + 20px gap
+					top: '50%',
+					left: 'auto',
+					bottom: 'auto',
+					transform: 'translateY(-50%)',
 					zIndex: 100,
 					display: 'block',
 					visibility: 'visible',
