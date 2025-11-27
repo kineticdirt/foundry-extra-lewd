@@ -62,18 +62,22 @@ export class SoundLinker {
 					}
 				});
 			}
-			// Get existing data if any (Foundry might have set some)
-			const existingData = ev.originalEvent.dataTransfer.getData('text/plain');
-			let dataObj = {};
-			try {
-				if (existingData) dataObj = JSON.parse(existingData);
-			} catch (e) { }
+		}
+	}
 
-			// Merge our data
-			dataObj.type = 'Playlist';
-			dataObj.playlistId = playlistId;
-
-			ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dataObj));
+	static hookRenderAmbientSoundConfig() {
+		Hooks.on('renderAmbientSoundConfig', (app, html, data) => {
+			const playlistSelect = $(`
+				<div class="form-group">
+					<label>Linked Playlist</label>
+					<div class="form-fields">
+						<select name="flags.${CONSTANTS.MODULE_NAME}.playlistId">
+							<option value="">None</option>
+						</select>
+					</div>
+					<p class="notes">Select a playlist to cycle through its tracks.</p>
+				</div>
+			`);
 
 			const select = playlistSelect.find('select');
 			const playlists = game.playlists?.contents || [];
@@ -90,11 +94,8 @@ export class SoundLinker {
 			const $html = $(html);
 			const target = $html.find('input[name="path"]').closest('.form-group');
 			if (target.length) {
-				console.log("SoundLinker | Injecting playlist selector");
 				target.before(playlistSelect);
 			} else {
-				console.warn("SoundLinker | Could not find input[name='path'] to inject selector");
-				// Fallback: try appending to the end of the form
 				$html.find('form').append(playlistSelect);
 			}
 
@@ -116,10 +117,34 @@ export class SoundLinker {
 		});
 	}
 
+	static hookRenderPlaylistDirectory() {
+		Hooks.on('renderPlaylistDirectory', (app, html, data) => {
+			const $html = $(html);
+			$html.find('.playlist-name').attr('draggable', true).on('dragstart', (ev) => {
+				const playlistId = $(ev.currentTarget).parents('.playlist').data('documentId');
+				const playlist = game.playlists.get(playlistId);
+
+				if (playlist) {
+					const dragData = {
+						type: 'Playlist',
+						playlistId: playlist.id
+					};
+					ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+				}
+			});
+		});
+	}
+
 	static hookCanvasDrop() {
 		Hooks.on('canvasDrop', async (canvas, data) => {
 			try {
-				const dropData = data;
+				// Handle both raw data and parsed data
+				let dropData = data;
+
+				// If data is not an object, try to parse it (though Foundry usually parses it)
+				// But for our custom drag event, we might need to handle it.
+				// However, Foundry's canvasDrop hook usually provides the parsed data object.
+
 				if (dropData.type === 'Playlist' && dropData.playlistId) {
 					const playlist = game.playlists?.get(dropData.playlistId);
 					if (!playlist || !playlist.sounds || playlist.sounds.size === 0) {
@@ -127,6 +152,8 @@ export class SoundLinker {
 						return false;
 					}
 
+					// Get position
+					// data.x and data.y are usually present in canvasDrop data
 					const coords = canvas.grid.getSnappedPosition(data.x, data.y);
 					const firstSound = playlist.sounds.contents[0];
 
@@ -150,24 +177,16 @@ export class SoundLinker {
 
 					await canvas.scene.createEmbeddedDocuments('AmbientSound', [ambientSoundData]);
 					ui.notifications.info(`Created Ambient Sound for playlist: ${playlist.name}`);
-					return false;
+					return false; // Prevent default
 				}
 			} catch (error) {
-				// Ignore errors
+				console.error("SoundLinker | Error in canvasDrop:", error);
 			}
 			return true;
 		});
 	}
 
 	static hookAmbientSoundPlayback() {
-		// We don't want to intercept playback anymore, we want to let it play the current track
-		// and then switch to the next one when it ends.
-		// So we REMOVE the previous logic that called playlist.playAll()
-
-		// However, we might want to ensure that if a sound is clicked in the playlist UI, it doesn't conflict?
-		// No, this hook was 'playAmbientSound', which is triggered when the AmbientSound object starts playing.
-
-		// If we want to support "Random" mode vs "Sequential", we could add that flag later.
-		// For now, we just let the default behavior happen (play the 'path'), and our 'end' listener handles the rest.
+		// Placeholder for future logic
 	}
 }

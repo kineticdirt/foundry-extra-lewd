@@ -1,4 +1,5 @@
 import CONSTANTS from '../module/constants.js';
+import { ClothingManager } from './clothing-manager.js';
 
 export class ClothingSystem extends FormApplication {
 	constructor(object, options) {
@@ -21,27 +22,8 @@ export class ClothingSystem extends FormApplication {
 	}
 
 	getData() {
-		// Read flags from the specific document (Token or Actor)
-		const clothingData = this.document.getFlag(CONSTANTS.MODULE_NAME, 'clothing') || {};
-		const slots = {
-			head: { label: 'Headwear', item: null },
-			necklace: { label: 'Necklace', item: null },
-			chest: { label: 'Chest (Bra/Shirt)', item: null },
-			arms: { label: 'Arms', item: null },
-			abdomen: { label: 'Abdomen', item: null },
-			hips: { label: 'Hips (Panties)', item: null },
-			legs: { label: 'Legwear', item: null },
-			misc: { label: 'Misc', item: null }
-		};
-
-		for (const [key, slot] of Object.entries(slots)) {
-			if (clothingData[key]) {
-				slot.item = clothingData[key];
-			}
-		}
-
 		return {
-			slots: slots,
+			sections: ClothingManager.getClothingData(this.document),
 			isToken: this.document instanceof TokenDocument
 		};
 	}
@@ -49,31 +31,7 @@ export class ClothingSystem extends FormApplication {
 	async _onDrop(event) {
 		const data = TextEditor.getDragEventData(event);
 		const slotKey = event.target.closest('.clothing-slot')?.dataset.slot;
-
-		if (!slotKey || data.type !== "Item") return;
-
-		let item = await Item.fromDropData(data);
-		if (!item) return;
-
-		// Inventory Integration: Check if item is owned by this actor
-		let ownedItem = item;
-		if (item.parent !== this.actor) {
-			// Create a copy in this actor's inventory
-			const createdItems = await this.actor.createEmbeddedDocuments("Item", [item.toObject()]);
-			ownedItem = createdItems[0];
-			ui.notifications.info(`Added ${ownedItem.name} to inventory.`);
-		}
-
-		// Store item data in the slot
-		const itemData = {
-			id: ownedItem.id,
-			name: ownedItem.name,
-			img: ownedItem.img,
-			uuid: ownedItem.uuid
-		};
-
-		// Save flag to the specific document (Token or Actor)
-		await this.document.setFlag(CONSTANTS.MODULE_NAME, `clothing.${slotKey}`, itemData);
+		await ClothingManager.handleDrop(this.document, this.actor, slotKey, data);
 		this.render(true);
 	}
 
@@ -84,7 +42,7 @@ export class ClothingSystem extends FormApplication {
 
 	async _onRemoveItem(event) {
 		const slotKey = event.currentTarget.closest('.clothing-slot').dataset.slot;
-		await this.document.unsetFlag(CONSTANTS.MODULE_NAME, `clothing.${slotKey}`);
+		await ClothingManager.removeItem(this.document, slotKey);
 		this.render(true);
 	}
 
@@ -103,39 +61,45 @@ export class ClothingSystem extends FormApplication {
 			});
 		});
 
-		// Add button to Token HUD
-		Hooks.on('renderTokenHUD', (app, html, data) => {
-			console.log("ClothingSystem | renderTokenHUD hook fired");
+		// Add HUD to Token HUD
+		Hooks.on('renderTokenHUD', async (app, html, data) => {
 			const token = app.object; // This is the Token placeable
 			const actor = token.actor;
 
-			if (!actor) {
-				console.log("ClothingSystem | No actor found for token");
-				return;
-			}
+			if (!actor) return;
+			if (!game.user.isGM && !actor.isOwner) return;
 
-			if (!game.user.isGM && !actor.isOwner) {
-				console.log("ClothingSystem | User is not owner/GM");
-				return;
-			}
+			// Prepare data
+			const sections = ClothingManager.getClothingData(token.document);
+			const template = `modules/${CONSTANTS.MODULE_NAME}/templates/clothing-hud.hbs`;
+			const rendered = await renderTemplate(template, { sections });
 
-			console.log("ClothingSystem | Adding button to HUD");
+			// Append to HUD
+			const $html = $(html);
+			const hudPanel = $(rendered);
+			$html.find('.col.left').before(hudPanel);
 
-			const button = $(`
-				<div class="control-icon clothing-system" title="Clothing (Token)">
-					<img src="modules/${CONSTANTS.MODULE_NAME}/icons/tshirt.png" width="36" height="36" style="border:none; filter: invert(1);">
-				</div>
-			`);
+			// Add Listeners to the HUD Panel
+			hudPanel.find('.clothing-slot').each((i, el) => {
+				// Drag Drop
+				el.addEventListener('drop', async (ev) => {
+					ev.preventDefault();
+					const data = TextEditor.getDragEventData(ev);
+					const slotKey = el.dataset.slot;
+					await ClothingManager.handleDrop(token.document, actor, slotKey, data);
+					app.render(); // Re-render HUD to show changes
+				});
 
-			button.click(() => {
-				// Pass the TokenDocument to allow token-specific storage
-				new ClothingSystem(token.document).render(true);
+				el.addEventListener('dragover', (ev) => ev.preventDefault());
+
+				// Remove Item
+				$(el).find('.remove-item').click(async (ev) => {
+					ev.stopPropagation();
+					const slotKey = el.dataset.slot;
+					await ClothingManager.removeItem(token.document, slotKey);
+					app.render();
+				});
 			});
-
-			// Add to left column as requested
-			$(html).find('.col.left').append(button);
 		});
 	}
 }
-
-

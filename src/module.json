@@ -1,6 +1,6 @@
 {
-	"id": "foundry-extra-lewd",
-	"name": "foundry-extra-lewd",
+	"id": "foundry-extras",
+	"name": "foundry-extras",
 	"title": "Foundry Extras",
 	"description": "A comprehensive module adding Playlist Importing, Sound Linking, Compendium Building, Clothing System, and PDF Sync.",
 	"version": "2.0.1",
@@ -35,7 +35,9 @@
 	"esmodules": [
 		"./main.js"
 	],
-	"styles": [],
+	"styles": [
+		"styles/module.css"
+	],
 	"packs": [],
 	"compatibility": {
 		"minimum": "12",
