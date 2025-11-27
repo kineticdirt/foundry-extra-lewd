@@ -285,16 +285,16 @@ export class ClothingPanel extends Application {
 				const panelWidth = 76; // 60px width + 8px padding on each side
 				const gap = 10; // Gap between panel and sidebar
 				
-				// Position panel to the LEFT of the sidebar
-				// Panel's right edge should be at: sidebarRect.left - gap
-				// So 'right' CSS = window.innerWidth - (sidebarRect.left - gap)
-				const distanceFromRight = window.innerWidth - sidebarRect.left + gap;
+				// Position panel to the LEFT of the sidebar using 'left' positioning
+				// Panel's right edge = sidebar's left edge - gap
+				// Panel's left edge = sidebar's left edge - gap - panelWidth
+				const panelLeft = sidebarRect.left - panelWidth - gap;
 				
 				$windowApp.css({
 					position: 'fixed',
-					right: `${distanceFromRight}px`, // Position to left of sidebar
+					left: `${panelLeft}px`, // Position to left of sidebar
 					top: `${sidebarRect.top + 20}px`, // Align with top of sidebar
-					left: 'auto',
+					right: 'auto',
 					bottom: 'auto',
 					zIndex: 100,
 					display: 'block',
@@ -302,15 +302,21 @@ export class ClothingPanel extends Application {
 					opacity: '1'
 				});
 				
-				console.log('ClothingPanel: Positioned', distanceFromRight, 'px from right edge (sidebar left:', sidebarRect.left, ', screen width:', window.innerWidth, ')');
+				console.log('ClothingPanel: Positioned at left:', panelLeft, 'px (sidebar left:', sidebarRect.left, ', panel width:', panelWidth, ', gap:', gap, ')');
 			} else {
 				// Fallback: position on right side, left of typical chat location
 				// Foundry chat sidebar is typically ~300px wide from right edge
+				const screenWidth = window.innerWidth;
+				const chatWidth = 300;
+				const panelWidth = 76;
+				const gap = 10;
+				const panelLeft = screenWidth - chatWidth - panelWidth - gap;
+				
 				$windowApp.css({
 					position: 'fixed',
-					right: '320px', // 300px for chat sidebar + 20px gap
+					left: `${panelLeft}px`,
 					top: '50%',
-					left: 'auto',
+					right: 'auto',
 					bottom: 'auto',
 					transform: 'translateY(-50%)',
 					zIndex: 100,
@@ -318,7 +324,7 @@ export class ClothingPanel extends Application {
 					visibility: 'visible',
 					opacity: '1'
 				});
-				console.log('ClothingPanel: Using fallback positioning (sidebar not found)');
+				console.log('ClothingPanel: Using fallback positioning (sidebar not found), left:', panelLeft);
 			}
 		}, 100);
 	}
