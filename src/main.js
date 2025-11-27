@@ -458,6 +458,13 @@ function registerSettings() {
 		type: Boolean,
 		default: false
 	});
+
+	game.settings.register(CONSTANTS.MODULE_NAME, 'hudLocked', {
+		scope: 'client',
+		config: false,
+		type: Boolean,
+		default: false
+	});
 	// ... (Other settings can be registered here or in a separate file)
 }
 

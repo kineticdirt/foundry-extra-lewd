@@ -7,6 +7,7 @@ export class ClothingHUD extends Application {
 		this._token = null;
 		this._actor = null;
 		this._minimized = false;
+		this._locked = false;
 	}
 
 	static get defaultOptions() {
@@ -22,10 +23,11 @@ export class ClothingHUD extends Application {
 	}
 
 	async getData() {
-		if (!this._token) return { sections: {}, minimized: this._minimized };
+		if (!this._token) return { sections: {}, minimized: this._minimized, locked: this._locked };
 		return {
 			sections: ClothingManager.getClothingData(this._token.document),
-			minimized: this._minimized
+			minimized: this._minimized,
+			locked: this._locked
 		};
 	}
 
@@ -99,6 +101,13 @@ export class ClothingHUD extends Application {
 			this.toggleMinimize();
 		});
 
+		// Lock/Unlock Toggle
+		html.find('.hud-lock-btn').click((ev) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+			this.toggleLock();
+		});
+
 		// Remove Item
 		html.find('.remove-item').click(async (ev) => {
 			ev.stopPropagation();
@@ -132,7 +141,8 @@ export class ClothingHUD extends Application {
 			let windowApp = null;
 
 			hudHeader.addEventListener('mousedown', (e) => {
-				if (e.target.closest('.hud-minimize-btn')) return; // Don't drag if clicking minimize button
+				if (e.target.closest('.hud-minimize-btn') || e.target.closest('.hud-lock-btn')) return; // Don't drag if clicking buttons
+				if (this._locked) return; // Don't drag if locked
 				isDragging = true;
 				startX = e.clientX;
 				startY = e.clientY;
@@ -189,77 +199,115 @@ export class ClothingHUD extends Application {
 		game.settings.set(CONSTANTS.MODULE_NAME, 'hudMinimized', this._minimized);
 	}
 
+	toggleLock() {
+		this._locked = !this._locked;
+		this.render();
+		// Persist lock state
+		game.settings.set(CONSTANTS.MODULE_NAME, 'hudLocked', this._locked);
+	}
+
 	// Override render to append to body but keep position fixed via CSS
 	async _render(force, options) {
 		await super._render(force, options);
 		
-		// Restore minimize state
+		// Restore minimize and lock state
 		const savedMinimized = game.settings.get(CONSTANTS.MODULE_NAME, 'hudMinimized');
 		if (savedMinimized !== undefined) {
 			this._minimized = savedMinimized;
 		}
-		
-		if (this.element) {
-			// Hide Foundry's window frame - target the window-app wrapper
-			const windowApp = this.element.closest('.window-app');
-			if (windowApp) {
-				windowApp.classList.add('clothing-hud-window');
-				windowApp.setAttribute('data-app-id', 'clothing-hud');
-				
-				// Hide header completely
-				const windowHeader = windowApp.querySelector('.window-header');
-				if (windowHeader) {
-					windowHeader.style.cssText = 'display: none !important; visibility: hidden !important; height: 0 !important; padding: 0 !important; margin: 0 !important; overflow: hidden !important;';
-				}
-				
-				// Style the window-app itself
-				windowApp.style.cssText = 'background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;';
-				
-				// Style window-content
-				const windowContent = windowApp.querySelector('.window-content');
-				if (windowContent) {
-					windowContent.style.cssText = 'padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; overflow: visible !important;';
-				}
-			}
-
-			// Find the actual clothing-hud div inside window-content
-			const hudDiv = this.element.find('.clothing-hud').length ? this.element.find('.clothing-hud') : this.element;
-			
-			// Apply minimize state
-			if (this._minimized) {
-				hudDiv.addClass('minimized');
-			} else {
-				hudDiv.removeClass('minimized');
-			}
-
-			// Ensure it's visible and positioned correctly
-			hudDiv.css({ display: 'flex' });
-
-			// Position the window-app wrapper, not the inner element
-			if (windowApp) {
-				// Restore Position (only if not using default right-side positioning)
-				const position = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPosition');
-				if (position && position.left && position.top) {
-					$(windowApp).css({
-						position: 'fixed',
-						left: position.left,
-						top: position.top,
-						bottom: 'auto',
-						right: 'auto',
-						transform: 'none'
-					});
-				} else {
-					// Default to right side
-					$(windowApp).css({
-						position: 'fixed',
-						left: 'auto',
-						right: '10px',
-						top: '50%',
-						bottom: 'auto',
-						transform: 'translateY(-50%)'
-					});
-				}
-			}
+		const savedLocked = game.settings.get(CONSTANTS.MODULE_NAME, 'hudLocked');
+		if (savedLocked !== undefined) {
+			this._locked = savedLocked;
 		}
+		
+		// Use setTimeout to ensure DOM is fully rendered
+		setTimeout(() => {
+			if (this.element) {
+				// Hide Foundry's window frame - target the window-app wrapper
+				const windowApp = this.element.closest('.window-app');
+				if (windowApp) {
+					windowApp.classList.add('clothing-hud-window');
+					windowApp.setAttribute('data-app-id', 'clothing-hud');
+					
+					// Aggressively hide header and all its children
+					const windowHeader = windowApp.querySelector('.window-header');
+					if (windowHeader) {
+						windowHeader.remove(); // Remove it entirely instead of hiding
+					}
+					
+					// Also remove any close buttons
+					const closeButtons = windowApp.querySelectorAll('.header-button.close, .control.close, a.close');
+					closeButtons.forEach(btn => btn.remove());
+					
+					// Style the window-app itself
+					windowApp.style.cssText = 'background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important;';
+					
+					// Style window-content
+					const windowContent = windowApp.querySelector('.window-content');
+					if (windowContent) {
+						windowContent.style.cssText = 'padding: 0 !important; margin: 0 !important; border: none !important; background: transparent !important; overflow: visible !important;';
+					}
+				}
+
+				// Find the actual clothing-hud div inside window-content
+				const hudDiv = this.element.find('.clothing-hud').length ? this.element.find('.clothing-hud') : this.element;
+				
+				// Apply minimize and lock state
+				if (this._minimized) {
+					hudDiv.addClass('minimized');
+				} else {
+					hudDiv.removeClass('minimized');
+				}
+				if (this._locked) {
+					hudDiv.addClass('locked');
+					const header = hudDiv.find('.hud-header');
+					if (header.length) {
+						header.css('cursor', 'default');
+					}
+				} else {
+					hudDiv.removeClass('locked');
+					const header = hudDiv.find('.hud-header');
+					if (header.length) {
+						header.css('cursor', 'move');
+					}
+				}
+
+				// Ensure it's visible and positioned correctly
+				hudDiv.css({ display: 'flex' });
+
+				// Position the window-app wrapper, not the inner element
+				if (windowApp) {
+					// Calculate right offset to avoid chat sidebar (typically 300px wide)
+					const chatSidebar = document.querySelector('#sidebar') || document.querySelector('.sidebar');
+					const chatWidth = chatSidebar ? chatSidebar.offsetWidth : 300;
+					const rightOffset = chatWidth + 20; // 20px padding from chat
+					
+					// Restore Position (only if user has manually moved it)
+					const position = game.settings.get(CONSTANTS.MODULE_NAME, 'hudPosition');
+					if (position && position.left && position.top && position.left !== 'auto') {
+						// User has manually positioned it
+						$(windowApp).css({
+							position: 'fixed',
+							left: position.left,
+							top: position.top,
+							bottom: 'auto',
+							right: 'auto',
+							transform: 'none'
+						});
+					} else {
+						// Default to right side, accounting for chat sidebar
+						$(windowApp).css({
+							position: 'fixed',
+							left: 'auto',
+							right: `${rightOffset}px`,
+							top: '50%',
+							bottom: 'auto',
+							transform: 'translateY(-50%)',
+							zIndex: 50
+						});
+					}
+				}
+			}
+		}, 0);
 	}
 }

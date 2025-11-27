@@ -36,17 +36,29 @@
 	font-size: 0.9em;
 }
 
-/* Hide Foundry Application window frame for Clothing HUD */
+/* Hide Foundry Application window frame for Clothing HUD - Aggressive removal */
 #clothing-hud.window-app .window-header,
 .clothing-hud-app.window-app .window-header,
 .window-app.clothing-hud-window .window-header,
-.window-app[data-app-id="clothing-hud"] .window-header {
+.window-app[data-app-id="clothing-hud"] .window-header,
+.window-app[data-app-id="clothing-hud"] header.window-header {
 	display: none !important;
 	visibility: hidden !important;
 	height: 0 !important;
 	padding: 0 !important;
 	margin: 0 !important;
 	overflow: hidden !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* Hide all close buttons in the window header */
+.window-app[data-app-id="clothing-hud"] .header-button.close,
+.window-app[data-app-id="clothing-hud"] .control.close,
+.window-app[data-app-id="clothing-hud"] a.close,
+.window-app[data-app-id="clothing-hud"] .window-header a {
+	display: none !important;
+	visibility: hidden !important;
 }
 
 #clothing-hud.window-app,
@@ -76,7 +88,7 @@
 .window-app.clothing-hud-window {
 	position: fixed !important;
 	top: 50% !important;
-	right: 10px !important;
+	right: 320px !important; /* Default: 300px chat + 20px padding */
 	left: auto !important;
 	transform: translateY(-50%) !important;
 	z-index: 50 !important;
@@ -100,39 +112,61 @@
 	overflow: hidden;
 }
 
-/* HUD Header */
+/* HUD Header - Larger and more functional */
 .hud-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 6px 8px;
-	background: rgba(255, 255, 255, 0.1);
-	border-bottom: 1px solid #444;
+	padding: 10px 12px;
+	background: rgba(255, 255, 255, 0.15);
+	border-bottom: 2px solid #555;
 	cursor: move;
+	min-height: 36px;
 }
 
 .hud-title {
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: bold;
-	color: #ccc;
+	color: #fff;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 1px;
+	flex: 1;
 }
 
+.hud-controls {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.hud-lock-btn,
 .hud-minimize-btn {
-	background: transparent;
-	border: none;
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid #555;
 	color: #ccc;
 	cursor: pointer;
-	padding: 2px 4px;
-	border-radius: 3px;
+	padding: 4px 8px;
+	border-radius: 4px;
 	transition: all 0.2s ease;
-	font-size: 10px;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
 }
 
+.hud-lock-btn:hover,
 .hud-minimize-btn:hover {
-	background: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 100, 0, 0.3);
+	border-color: #ff6400;
 	color: #ff6400;
+	transform: scale(1.05);
+}
+
+.hud-header.locked,
+.clothing-hud.locked .hud-header {
+	cursor: default !important;
 }
 
 /* HUD Content */

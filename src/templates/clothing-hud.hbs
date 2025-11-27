@@ -1,18 +1,25 @@
 <div class="clothing-hud {{#if minimized}}minimized{{/if}}">
 	<div class="hud-header">
 		<span class="hud-title">Clothing</span>
-		<button class="hud-minimize-btn" type="button" title="{{#if minimized}}Expand{{else}}Minimize{{/if}}">
-			<i class="fas {{#if minimized}}fa-chevron-left{{else}}fa-chevron-down{{/if}}"></i>
-		</button>
+		<div class="hud-controls">
+			<button class="hud-lock-btn" type="button" title="{{#if locked}}Unlock{{else}}Lock{{/if}} Position">
+				<i class="fas {{#if locked}}fa-lock{{else}}fa-unlock{{/if}}"></i>
+			</button>
+			<button class="hud-minimize-btn" type="button" title="{{#if minimized}}Expand{{else}}Minimize{{/if}}">
+				<i class="fas {{#if minimized}}fa-chevron-left{{else}}fa-chevron-down{{/if}}"></i>
+			</button>
+		</div>
 	</div>
 	{{#unless minimized}}
 	<div class="hud-content">
 		{{#each sections as |section sectionKey|}}
 		<div class="clothing-section" data-section="{{sectionKey}}">
+			{{#if section.label}}
 			<div class="section-header">
 				<i class="{{section.icon}}"></i>
 				<span class="section-label">{{section.label}}</span>
 			</div>
+			{{/if}}
 			<div class="section-slots">
 				{{#each section.slots as |slot|}}
 				<div class="clothing-slot {{#if slot.item}}filled{{else}}empty{{/if}}" data-slot="{{slot.key}}"
