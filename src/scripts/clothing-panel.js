@@ -36,27 +36,55 @@ export class ClothingPanel extends Application {
 			};
 		}
 
-		// Get clothing data and flatten to single array of 8 slots
-		const sections = ClothingManager.getClothingData(this._token.document);
-		const slots = this._flattenSectionsToSlots(sections);
+		// Get clothing data and merge with panel slots structure
+		const clothingData = this._token.document.getFlag(CONSTANTS.MODULE_NAME, 'clothing') || {};
+		const slots = this._getEmptySlots();
+		
+		// Populate slots with actual item data from clothing flags
+		slots.forEach(slot => {
+			if (clothingData[slot.key]) {
+				slot.item = clothingData[slot.key];
+			}
+		});
 
 		return { slots };
 	}
 
 	/**
-	 * Get empty slots structure (8 slots total)
+	 * Get empty slots structure (20 slots total)
 	 * Each slot has a bodyPart property for CSS positioning
 	 */
 	_getEmptySlots() {
 		return [
-			{ key: 'head_1', label: 'Head', icon: 'fas fa-head-side', item: null, bodyPart: 'head' },
-			{ key: 'necklace', label: 'Necklace', icon: 'fas fa-gem', item: null, bodyPart: 'neck' },
-			{ key: 'chest', label: 'Chest', icon: 'fas fa-vest', item: null, bodyPart: 'chest' },
-			{ key: 'arms', label: 'Arms', icon: 'fas fa-hand-paper', item: null, bodyPart: 'arms' },
-			{ key: 'abdomen_1', label: 'Abdomen', icon: 'fas fa-user', item: null, bodyPart: 'abdomen' },
-			{ key: 'hips_1', label: 'Hips', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips' },
-			{ key: 'legs_1', label: 'Legs', icon: 'fas fa-socks', item: null, bodyPart: 'legs' },
-			{ key: 'feet_1', label: 'Feet', icon: 'fas fa-shoe-prints', item: null, bodyPart: 'feet' }
+			// Head - 2 slots
+			{ key: 'head_1', label: 'Head 1', icon: 'fas fa-head-side', item: null, bodyPart: 'head', layer: 1 },
+			{ key: 'head_2', label: 'Head 2', icon: 'fas fa-head-side', item: null, bodyPart: 'head', layer: 2 },
+			// Necklace - 2 slots
+			{ key: 'necklace_1', label: 'Necklace 1', icon: 'fas fa-gem', item: null, bodyPart: 'neck', layer: 1 },
+			{ key: 'necklace_2', label: 'Necklace 2', icon: 'fas fa-gem', item: null, bodyPart: 'neck', layer: 2 },
+			// Chest - 4 slots
+			{ key: 'chest_1', label: 'Chest 1', icon: 'fas fa-vest', item: null, bodyPart: 'chest', layer: 1 },
+			{ key: 'chest_2', label: 'Chest 2', icon: 'fas fa-vest', item: null, bodyPart: 'chest', layer: 2 },
+			{ key: 'chest_3', label: 'Chest 3', icon: 'fas fa-vest', item: null, bodyPart: 'chest', layer: 3 },
+			{ key: 'chest_4', label: 'Chest 4', icon: 'fas fa-vest', item: null, bodyPart: 'chest', layer: 4 },
+			// Arms - 2 slots
+			{ key: 'arms_1', label: 'Arms 1', icon: 'fas fa-hand-paper', item: null, bodyPart: 'arms', layer: 1 },
+			{ key: 'arms_2', label: 'Arms 2', icon: 'fas fa-hand-paper', item: null, bodyPart: 'arms', layer: 2 },
+			// Abdomen - 2 slots
+			{ key: 'abdomen_1', label: 'Abdomen 1', icon: 'fas fa-user', item: null, bodyPart: 'abdomen', layer: 1 },
+			{ key: 'abdomen_2', label: 'Abdomen 2', icon: 'fas fa-user', item: null, bodyPart: 'abdomen', layer: 2 },
+			// Hips - 3 slots
+			{ key: 'hips_1', label: 'Hips 1', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips', layer: 1 },
+			{ key: 'hips_2', label: 'Hips 2', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips', layer: 2 },
+			{ key: 'hips_3', label: 'Hips 3', icon: 'fas fa-user-friends', item: null, bodyPart: 'hips', layer: 3 },
+			// Legs - 2 slots
+			{ key: 'legs_1', label: 'Legs 1', icon: 'fas fa-socks', item: null, bodyPart: 'legs', layer: 1 },
+			{ key: 'legs_2', label: 'Legs 2', icon: 'fas fa-socks', item: null, bodyPart: 'legs', layer: 2 },
+			// Feet - 2 slots
+			{ key: 'feet_1', label: 'Feet 1', icon: 'fas fa-shoe-prints', item: null, bodyPart: 'feet', layer: 1 },
+			{ key: 'feet_2', label: 'Feet 2', icon: 'fas fa-shoe-prints', item: null, bodyPart: 'feet', layer: 2 },
+			// Misc - 1 slot
+			{ key: 'misc', label: 'Misc', icon: 'fas fa-star', item: null, bodyPart: 'misc', layer: 1 }
 		];
 	}
 

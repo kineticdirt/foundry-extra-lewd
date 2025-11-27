@@ -348,54 +348,47 @@
 
 /* Clothing Panel Container */
 .clothing-panel {
-	width: 80px;
-	min-height: 500px; /* Height to accommodate silhouette */
+	width: 200px; /* Wider to accommodate silhouette on left + slots on right */
+	min-height: 500px;
 	padding: 8px;
 	background: rgba(0, 0, 0, 0.85);
 	border: 2px solid #444;
 	border-radius: 8px;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
 	position: relative;
-	display: block;
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
 	overflow: visible;
 }
 
-/* Silhouette Background - Expanded and partially visible */
-.clothing-panel .silhouette-background {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background-image: url('modules/foundry-extras/icons/woman-silhouette.png');
-	background-size: 90% auto; /* Expanded to 90% of container width */
-	background-position: center;
-	background-repeat: no-repeat;
-	opacity: 0.4; /* Partially visible - visible but not overwhelming */
-	pointer-events: none;
-	z-index: 0;
+/* Silhouette Icon - On the LEFT */
+.clothing-panel .silhouette-icon {
+	width: 60px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
 }
 
-/* Fallback SVG silhouette if PNG not found - Expanded and visible */
-.clothing-panel .silhouette-background::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+.clothing-panel .silhouette-icon img,
+.clothing-panel .silhouette-icon svg {
 	width: 100%;
-	height: 100%;
-	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 500"><path fill="rgba(255,255,255,0.4)" d="M50 20 Q35 20 30 40 L25 60 Q20 80 25 100 L30 140 Q35 180 40 220 L45 280 Q48 320 50 360 L55 400 Q58 440 60 460 L65 480 Q70 490 50 490 Q30 490 35 480 L40 460 Q42 440 45 400 Q48 360 50 320 L55 280 Q60 220 65 180 L70 140 Q75 100 70 60 L65 40 Q60 20 50 20 Z"/></svg>');
-	background-size: 90% auto; /* Expanded to 90% */
-	background-position: center;
-	background-repeat: no-repeat;
-	opacity: 0.4;
+	height: auto;
+	max-height: 100%;
+	opacity: 0.5;
+	object-fit: contain;
 }
 
-/* Clothing Panel Slots - Positioned absolutely over silhouette */
+/* Slots Container - On the RIGHT */
+.clothing-panel .slots-container {
+	flex: 1;
+	position: relative;
+	min-height: 500px;
+}
+
+/* Clothing Panel Slots - Positioned in groups by body part */
 .clothing-panel .clothing-slot {
 	width: 44px;
 	height: 44px;
@@ -406,41 +399,115 @@
 	background: rgba(255, 255, 255, 0.1);
 	transition: all 0.2s ease;
 	z-index: 10;
-	left: 50%;
-	transform: translateX(-50%);
 }
 
-/* Position slots to align with body parts on silhouette */
-.clothing-panel .clothing-slot[data-body-part="head"] {
+/* Head - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="head"][data-layer="1"] {
 	top: 5%;
+	left: 0;
 }
 
-.clothing-panel .clothing-slot[data-body-part="neck"] {
+.clothing-panel .clothing-slot[data-body-part="head"][data-layer="2"] {
+	top: 5%;
+	left: 50px;
+}
+
+/* Necklace - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="neck"][data-layer="1"] {
 	top: 12%;
+	left: 0;
 }
 
-.clothing-panel .clothing-slot[data-body-part="chest"] {
+.clothing-panel .clothing-slot[data-body-part="neck"][data-layer="2"] {
+	top: 12%;
+	left: 50px;
+}
+
+/* Chest - 4 slots (2x2 grid) */
+.clothing-panel .clothing-slot[data-body-part="chest"][data-layer="1"] {
 	top: 20%;
+	left: 0;
 }
 
-.clothing-panel .clothing-slot[data-body-part="arms"] {
-	top: 25%;
+.clothing-panel .clothing-slot[data-body-part="chest"][data-layer="2"] {
+	top: 20%;
+	left: 50px;
 }
 
-.clothing-panel .clothing-slot[data-body-part="abdomen"] {
-	top: 40%;
+.clothing-panel .clothing-slot[data-body-part="chest"][data-layer="3"] {
+	top: 28%;
+	left: 0;
 }
 
-.clothing-panel .clothing-slot[data-body-part="hips"] {
-	top: 55%;
+.clothing-panel .clothing-slot[data-body-part="chest"][data-layer="4"] {
+	top: 28%;
+	left: 50px;
 }
 
-.clothing-panel .clothing-slot[data-body-part="legs"] {
-	top: 70%;
+/* Arms - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="arms"][data-layer="1"] {
+	top: 35%;
+	left: 0;
 }
 
-.clothing-panel .clothing-slot[data-body-part="feet"] {
-	top: 85%;
+.clothing-panel .clothing-slot[data-body-part="arms"][data-layer="2"] {
+	top: 35%;
+	left: 50px;
+}
+
+/* Abdomen - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="abdomen"][data-layer="1"] {
+	top: 45%;
+	left: 0;
+}
+
+.clothing-panel .clothing-slot[data-body-part="abdomen"][data-layer="2"] {
+	top: 45%;
+	left: 50px;
+}
+
+/* Hips - 3 slots */
+.clothing-panel .clothing-slot[data-body-part="hips"][data-layer="1"] {
+	top: 58%;
+	left: 0;
+}
+
+.clothing-panel .clothing-slot[data-body-part="hips"][data-layer="2"] {
+	top: 58%;
+	left: 50px;
+}
+
+.clothing-panel .clothing-slot[data-body-part="hips"][data-layer="3"] {
+	top: 66%;
+	left: 0;
+}
+
+/* Legs - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="legs"][data-layer="1"] {
+	top: 74%;
+	left: 0;
+}
+
+.clothing-panel .clothing-slot[data-body-part="legs"][data-layer="2"] {
+	top: 74%;
+	left: 50px;
+}
+
+/* Feet - 2 slots */
+.clothing-panel .clothing-slot[data-body-part="feet"][data-layer="1"] {
+	top: 88%;
+	left: 0;
+}
+
+.clothing-panel .clothing-slot[data-body-part="feet"][data-layer="2"] {
+	top: 88%;
+	left: 50px;
+}
+
+/* Misc - 1 slot */
+.clothing-panel .clothing-slot[data-body-part="misc"] {
+	top: 95%;
+	left: 0;
 }
 
 .clothing-panel .clothing-slot:hover {
