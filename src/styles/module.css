@@ -402,7 +402,7 @@
 	border: 1px solid #ff6400;
 	border-radius: 0 0 4px 4px;
 	color: #fff;
-	cursor: pointer;
+	cursor: pointer !important;
 	padding: 4px 8px;
 	font-size: 10px;
 	transition: all 0.2s ease;
@@ -414,8 +414,9 @@
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	z-index: 100;
+	z-index: 1000 !important;
 	position: relative;
+	pointer-events: auto !important;
 }
 
 .clothing-panel .panel-minimize-btn:hover {

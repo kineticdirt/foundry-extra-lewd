@@ -212,24 +212,35 @@ export class ClothingPanel extends Application {
 
 		// V13 compatibility: html is a raw DOM element
 		const root = (html instanceof HTMLElement) ? html : (html[0] || html);
-		if (!root) return;
+		console.log('ClothingPanel: activateListeners called, root:', root);
+		if (!root) {
+			console.error('ClothingPanel: No root element found!');
+			return;
+		}
 
-		// Minimize/Maximize Toggle - Use event delegation to catch clicks
+		// Minimize/Maximize Toggle - Use multiple methods to ensure it works
 		const minimizeBtn = root.querySelector('.panel-minimize-btn');
+		console.log('ClothingPanel: Found minimize button:', minimizeBtn);
+		
 		if (minimizeBtn) {
-			// Remove any existing listeners
-			const newBtn = minimizeBtn.cloneNode(true);
-			minimizeBtn.parentNode.replaceChild(newBtn, minimizeBtn);
-			
-			newBtn.onclick = (ev) => {
+			// Method 1: Direct onclick
+			minimizeBtn.onclick = (ev) => {
 				ev.stopPropagation();
 				ev.preventDefault();
-				console.log('ClothingPanel: Minimize button clicked');
+				console.log('ClothingPanel: Minimize button clicked (onclick)');
 				this.toggleMinimize();
 			};
 			
-			// Also listen on the icon inside
-			const icon = newBtn.querySelector('i');
+			// Method 2: addEventListener
+			minimizeBtn.addEventListener('click', (ev) => {
+				ev.stopPropagation();
+				ev.preventDefault();
+				console.log('ClothingPanel: Minimize button clicked (addEventListener)');
+				this.toggleMinimize();
+			});
+			
+			// Method 3: Listen on icon
+			const icon = minimizeBtn.querySelector('i');
 			if (icon) {
 				icon.onclick = (ev) => {
 					ev.stopPropagation();
@@ -238,8 +249,18 @@ export class ClothingPanel extends Application {
 					this.toggleMinimize();
 				};
 			}
+			
+			// Test: Add visual feedback on mousedown
+			minimizeBtn.addEventListener('mousedown', () => {
+				console.log('ClothingPanel: Button mousedown detected');
+				minimizeBtn.style.backgroundColor = 'red';
+				setTimeout(() => {
+					minimizeBtn.style.backgroundColor = '';
+				}, 200);
+			});
 		} else {
-			console.warn('ClothingPanel: Minimize button not found in root:', root);
+			console.error('ClothingPanel: Minimize button NOT found in root!');
+			console.log('ClothingPanel: Root HTML:', root.innerHTML);
 		}
 
 		// Remove Item
